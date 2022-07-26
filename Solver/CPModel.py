@@ -1,5 +1,5 @@
 # ------------------Copyright (C) 2022 University of Strathclyde and Author ---------------------------------
-# --------------------------------- Author: Cheyenne Powell -------------------------------------------------
+# --------------------------------- Author: Cheyenne Powell and Iain Hall -------------------------------------------------
 # ------------------------- e-mail: cheyenne.powell@strath.ac.uk --------------------------------------------
 
 # This file contains the or-tools model and hints a solution from the manual schedule created
