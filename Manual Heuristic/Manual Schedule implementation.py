@@ -139,6 +139,7 @@ for t in all_T:
     memoryLog[t] = storedData
     ProObsLog[t][0] = ObsStored/obsSize   #processed and observations log
     ProObsLog[t][1] = Processed/obsSize 
+    ProObsLog[t][2] = Downlinks/obsSize
  
 
 # assembles results to be written out to an xlsx file
@@ -168,6 +169,10 @@ time = [t*dt for t in all_T]
 plotFunctions.memoryGraph(memoryLog,time)
 plotFunctions.ProObsGraph(ProObsLog,time)
 
+
+downlinking = [action[t][2] for t in all_T]
+
+plotFunctions.downlinkingGraph(downlinking,time)
 print("completed manual heuristic")
 
 

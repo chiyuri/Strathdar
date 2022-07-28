@@ -16,7 +16,7 @@ pio.renderers.default='svg'
 # function for creating Gantt chart from a set of tasks completed at associated times, the time index they are against, and the task names
 def ganttChart(df,titles):
     
-    fig, ax = plt.subplots(1, figsize = (16,6))
+    fig, ax = plt.subplots(1, figsize = (24,6))
     
     ax.barh(df.action , df.duration, left=df.start)
     fig.show()
@@ -45,7 +45,17 @@ def ProObsGraph(ProObsLog,time):
     plt.title("Processed and Observations over time")
     plt.xlabel("time (s)")
     plt.ylabel("number processed/observed datasets")
-    plt.legend(["observations", "processed"])
+    plt.legend(["observations", "processed","Downlinked"])
     ax = plt.gca()
     ax.set_xticklabels([])
     
+    
+def downlinkingGraph(downlink, time):
+    
+    plt.figure(4)
+    plt.plot(time, downlink)
+    plt.title("downlinking activity over time")
+    plt.xlabel("time (s)")
+    plt.ylabel("downlinking (y/n)")
+    ax = plt.gca()
+    ax.set_xticklabels([])
