@@ -7,7 +7,7 @@ Created on Thu Jul 28 14:18:06 2022
 
 # CP model tester, not for long term use
 
-
+import math
 import pandas as pd
 from ortools.sat.python import cp_model
 from CPModel_SC import CPModel_SC_data
@@ -31,7 +31,7 @@ start_shift=0
 obs_mem_size = 1500
 obs_rate = 1 
 pro_mem_size = 30
-pro_rate = int(FLOP_to_proc/FLOPS_available)
+pro_rate = math.ceil(FLOP_to_proc/FLOPS_available)
 down_rate = 32
 memory_init = 0
 memory_storage = 64000
