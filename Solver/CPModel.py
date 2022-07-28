@@ -12,7 +12,23 @@ import os
 
 
 def CPModel_data(day, interval, onboard_mem, image_mem, down_link_data_rate, process_im_mem, filename, mem_data_list,
-                 country_data_list, gnd_data_list, day_data_list, horizon):
+                 Any_Ilum_data_list, gnd_data_list, horizon):
+    
+    # ==== Inputs ====
+    # day: not sure
+    # interval: interval of time steps (shifts) over which the model is optimising
+    # onboard_mem: the total memory available
+    # image_mem: The amount of memory used per image
+    # down_link_data_rate: the rate at which memory is downlinked
+    # process_im_mem: the amount of memory use per processed image
+    # filename: the file name which is used to store the optimised schedule
+    # mem_data_list:
+    # Any_Ilum_data_list: list containing whether any iluminator is in view or not
+    # gnd_data_list: list containing whether any ground station is in view or not
+    # horizon: the horizon over which the model is being run
+    
+    
+    
     # using idle time
     all_actions = range(0, 3)
     # without idle time implemented
@@ -86,12 +102,11 @@ def CPModel_data(day, interval, onboard_mem, image_mem, down_link_data_rate, pro
         # during the day (sunlight-exposure).
         # (country_data_list[n][2] == day_data_list[n][2]) can also be a '1' if both are '0' thus the 2 'and'
         # statements are needed.
-        model.Add(((country_data_list[n][2] == day_data_list[n][2]) and (
-                country_data_list[n][2] == 1))).OnlyEnforceIf(shifts[(0, s)])
+        model.Add((Any_Ilum_data_list[n] == 1) ).OnlyEnforceIf(shifts[(0, s)])
 
         # action '2' - down_link is assigned a boolean value of '1' when ground station is accessible at any
         # time over a day period.
-        model.Add(gnd_data_list[n][2] == 1).OnlyEnforceIf(shifts[(2, s)])
+        model.Add(gnd_data_list[n] == 1).OnlyEnforceIf(shifts[(2, s)])
 
     # constraints are applied here, based on the calculations, float values are created that the model is unable
     # to handle, therefore multiples of 100 are used.
