@@ -20,7 +20,6 @@ these actions are held in an action array where
 """
 
 
-# code to import the potential target data
 
 
 
@@ -31,6 +30,10 @@ import plotFunctions
 
 
 dt = 5
+
+
+
+# code to import the potential target data
 
 #read in the illuminator data value (avg objects detected in time increment)
 data = pd.read_csv("../Data/5s, 5d, polar/Avg objects Detection log.csv ")
@@ -44,11 +47,11 @@ data = pd.read_csv("../Data/5s, 5d, polar/Communications Data log.csv")
 datals= data.values.tolist() 
 
 
-
+# chages downlink from list of lists to 1D list
 downlink_possible = [datals[i][0] for i in range(0, len(datals))]
     
 
-
+#generating the range overwhich the scheduler operates
 num_T = len(target_value) # final time incriment
 num_sats = 66   # illuminating satellites
 num_actions = 4
@@ -56,14 +59,19 @@ all_sats = range(num_sats)
 all_T = range(num_T)
 all_actions = range(num_actions)
 
+# preallocating memory for lists
 action = [[0 for a in all_actions ] for t in all_T] #4 by time length variable
 actionABS = [0 for t in all_T] # measure task in int value between 0 and 3
 target_sat = [[0 for s in all_sats] for t in all_T]
-memoryLog = [0 for t in all_T]
+
 time = [[i*dt] for i in range(0,len(data))]
+
+memoryLog = [0 for t in all_T]
+ProObsLog = [[0 for a in all_actions] for t in all_T]
+
 #constrained resource variables
 # note memory is in kB
-maxStorage = 64e3
+maxStorage = 64000
 dataPerObs = 1500
 dataPerPro = 29
 
@@ -93,14 +101,13 @@ for t in all_T:
         actionABS[t] = "downlink" 
         action[t][2] = 1
         
-        storedData = storedData - 250
-        memoryLog[t] = storedData
+        
         
         Downlinks += dowSize
         Processed -= dowSize
         
         
-    elif sum(ilum_in_view[t][s] for s in all_sats)== 1 and storedData <= maxStorage + dataPerObs:  # observe decision pos 0
+    elif sum(ilum_in_view[t][s] for s in all_sats)== 1 and storedData <= maxStorage - dataPerObs:  # observe decision pos 0
         actionABS[t] = "observe"
         action[t][0] = 1
         #ObservedValue.append(max(target_value[t][s] for s in all_sats))
@@ -126,11 +133,15 @@ for t in all_T:
         action[t][3] =1     # idle decision pos 3
         actionABS[t] = "idle"
         #memoryLog[t] = storedData
-        
-    storedData = ObsStored*dataPerObs + Processed*dataPerPro
+    
+    #logs the varying actions to be used in plotting
+    storedData = (ObsStored/obsSize)*dataPerObs + (Processed/proSize)*dataPerPro
     memoryLog[t] = storedData
-    
-    
+    ProObsLog[t][0] = ObsStored/obsSize   #processed and observations log
+    ProObsLog[t][1] = Processed/obsSize 
+ 
+
+# assembles results to be written out to an xlsx file
 titles = ['Time (s)','Observing', 'Processing', 'downlinking', 'idling']
 name = 'Manual Heuristic results'
 destination = "../results/manual heuristic/"
@@ -142,7 +153,7 @@ for t in all_T:
 xlsxOut(actionOut,titles,name,destination)
 
 
-# need to learn hoew to make gantt chart better
+# Creates pd dataframe to then be used to make gantt chart
 titles = ['Observing', 'Processing', 'downlinking', 'idling']
 data = []
 for t in all_T:
@@ -150,11 +161,12 @@ for t in all_T:
     data.append(tempDict)
 df = pd.DataFrame(data)
 
+
 plotFunctions.ganttChart(df,titles)
 
 time = [t*dt for t in all_T]
 plotFunctions.memoryGraph(memoryLog,time)
-
+plotFunctions.ProObsGraph(ProObsLog,time)
 
 print("completed manual heuristic")
 

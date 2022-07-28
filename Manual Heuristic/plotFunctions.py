@@ -36,3 +36,16 @@ def memoryGraph(memoryLog, time):
     plt.ylabel("memory used (kB)")
     ax = plt.gca()
     ax.set_xticklabels([])
+    
+    
+def ProObsGraph(ProObsLog,time):
+    
+    plt.figure(3)
+    plt.plot(time, ProObsLog)
+    plt.title("Processed and Observations over time")
+    plt.xlabel("time (s)")
+    plt.ylabel("number processed/observed datasets")
+    plt.legend(["observations", "processed"])
+    ax = plt.gca()
+    ax.set_xticklabels([])
+    
