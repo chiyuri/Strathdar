@@ -7,6 +7,7 @@ Created on Thu Jul 28 12:04:45 2022
 
 
 from ortools.sat.python import cp_model
+
 #from file_recall import file_recall
 import os
 
@@ -41,7 +42,7 @@ def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_s
     # limits the optimiser to one action at any time
     
     for s in all_mod_shifts:
-        model.AddExactlyOne(shifts[(a,s)] for s in all_action)
+        model.AddExactlyOne(shifts[(a,s)] for a in all_action)
 
     for s in all_mod_shifts:
         # requires an illuminator to be in view for observing to occur
@@ -64,7 +65,7 @@ def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_s
         
         memory += shifts[(0,s)] * int(obs_mem_size ) + shifts[(1,s)] * int((pro_mem_size - obs_mem_size/pro_rate))   - shifts[(2,s)] *int( (down_rate))
         
-        num_obs += shifts[(0,s)] * int(obs_rate )- shifts[(1,s)]  * int( pro_rate) 
+        num_obs += shifts[(0,s)] * int(obs_rate )- shifts[(1,s)]  * int(pro_rate) 
         
         num_pro += shifts[(1,s)] * int(pro_rate) - shifts[(2,s)] * int(down_rate)
         
@@ -78,7 +79,7 @@ def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_s
         model.Add(memory < memory_storage)
         
         
-    model.Maximize(sum(shifts[(2,s)] for s in all_mod_shifts))
+    model.Maximize(sum(3*shifts[(2,s)] +2*shifts[(1,s)] + shifts[(0,s)]for s in all_mod_shifts))
     
     
     return model, shifts
