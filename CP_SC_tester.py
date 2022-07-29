@@ -27,10 +27,13 @@ gnd_stat_list = [datals[i][0] for i in range(0, len(datals))]
 FLOP_to_proc = 920
 FLOPS_available = 92 # giga flops
 
+
+
+dataset = 100 # used to allow a dataset to be split into smaller parts for processing
 interval = 100
 start_shift=0
 obs_mem_size = 1500
-obs_rate = 1 
+obs_rate = 100 
 pro_mem_size = 30
 pro_rate = math.ceil(FLOP_to_proc/FLOPS_available)
 down_rate = 32
