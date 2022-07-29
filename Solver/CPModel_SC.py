@@ -47,9 +47,9 @@ def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_s
     for s in all_mod_shifts:
         # requires an illuminator to be in view for observing to occur
         AnyIlum = sum(Any_Ilum_list[s][sat] for sat in all_sats)
-        model.Add( AnyIlum > 0).OnlyEnforceIf(shifts[(0,s+b)])
+        model.Add( AnyIlum > 0).OnlyEnforceIf(shifts[(0,s)])
         # requires a ground station to be in view for downlinking to occur
-        model.Add(Gnd_stat_list[s] == 1).OnlyEnforceIf(shifts[(2,s+b)])
+        model.Add(Gnd_stat_list[s] > 0).OnlyEnforceIf(shifts[(2,s)])
    
     if b == 0 :
         memory = int(0) 
@@ -79,7 +79,7 @@ def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_s
         model.Add(memory < memory_storage)
         
         
-    model.Maximize(sum(3*shifts[(2,s)] +2*shifts[(1,s)] + shifts[(0,s)]for s in all_mod_shifts))
+    model.Maximize(sum(4*shifts[(2,s)] +2*shifts[(1,s)] + shifts[(0,s)]for s in all_mod_shifts))
     
     
     return model, shifts
