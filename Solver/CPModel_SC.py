@@ -74,7 +74,7 @@ def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_s
         # require data sets to be available for processing for processing to occur
         model.Add(num_obs >= pro_rate).OnlyEnforceIf(shifts[(1,s)])
         # requires processed data sets to available for downlinking to occur
-        model.Add(num_pro >= down_rate).OnlyEnforceIf(shifts[(2,s)])
+        #model.Add(num_pro*pro_mem_size >= down_rate).OnlyEnforceIf(shifts[(2,s)])
         #requires used memory to remain below memory available
         model.Add(memory < memory_storage)
         
@@ -82,7 +82,7 @@ def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_s
     model.Maximize(sum(4*shifts[(2,s)] +2*shifts[(1,s)] + shifts[(0,s)]for s in all_mod_shifts))
     
     
-    return model, shifts
+    return model, shifts, num_obs, num_pro, num_down, memory
         
         
         

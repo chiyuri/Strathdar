@@ -27,7 +27,7 @@ gnd_stat_list = [datals[i][0] for i in range(0, len(datals))]
 FLOP_to_proc = 920
 FLOPS_available = 92 # giga flops
 
-interval = 100
+interval = 200
 start_shift=0
 obs_mem_size = 1500
 obs_rate = 1 
@@ -42,14 +42,14 @@ all_action = range(4)
 dt = 1
 
 
-(model, shifts) = CPModel_SC_data(any_ilum_list,gnd_stat_list, interval,start_shift, obs_mem_size, obs_rate, pro_mem_size,
+(model, shifts, num_obs, num_pro, num_down, memory) = CPModel_SC_data(any_ilum_list,gnd_stat_list, interval,start_shift, obs_mem_size, obs_rate, pro_mem_size,
                     pro_rate, down_rate, memory_init, memory_storage, num_obs_init)
 
 solver = cp_model.CpSolver()
 
 solver.parameters.max_time_in_seconds = 600
 solver.parameters.log_search_progress = True
-solver.parameters.num_search_workers = 4
+solver.parameters.num_search_workers = 8
 
 status = solver.Solve(model)
 if status == cp_model.OPTIMAL :
