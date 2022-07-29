@@ -27,7 +27,7 @@ gnd_stat_list = [datals[i][0] for i in range(0, len(datals))]
 FLOP_to_proc = 920
 FLOPS_available = 92 # giga flops
 
-interval = 200
+interval = 1000
 start_shift=0
 obs_mem_size = 1500
 obs_rate = 100 
@@ -35,7 +35,7 @@ pro_mem_size = 30
 pro_rate = math.ceil(FLOP_to_proc/FLOPS_available)
 down_rate = 32
 memory_init = 0
-memory_storage = 64000
+memory_storage = 10000
 num_obs_init = 0
 all_T = range(interval)
 all_action = range(4)
@@ -45,9 +45,9 @@ dt = 1
 (model, shifts, num_obs, num_pro, num_down, memory) = CPModel_SC_data(any_ilum_list,gnd_stat_list, interval,start_shift, obs_mem_size, obs_rate, pro_mem_size,
                     pro_rate, down_rate, memory_init, memory_storage, num_obs_init)
 
-solver = cp_model.CpSolver()
+solver = cp_model.CpSolver()  
 
-solver.parameters.max_time_in_seconds = 600
+solver.parameters.max_time_in_seconds =1000
 solver.parameters.log_search_progress = True
 solver.parameters.num_search_workers = 8
 
@@ -58,7 +58,7 @@ if status == cp_model.OPTIMAL :
 elif status == cp_model.FEASIBLE:
     print('Solution: feasible found')
 else:
-    print('not feasible solution found')
+    print('Solution: no feasible solution found')
 
 
     
