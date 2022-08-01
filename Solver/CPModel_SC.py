@@ -14,7 +14,7 @@ import os
 
 
 def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_size, obs_rate, pro_mem_size,
-                    pro_rate, down_rate, memory_init, memory_storage, num_obs_init):
+                    pro_rate, down_rate, memory_init, memory_storage, num_obs_init,dt):
     
     model = cp_model.CpModel()
     
@@ -63,13 +63,13 @@ def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_s
         
     for s in all_mod_shifts:
         
-        memory += shifts[(0,s)] * obs_rate *obs_mem_size + shifts[(1,s)] *pro_rate* (pro_mem_size - obs_mem_size)   - shifts[(2,s)] *int( (down_rate))
+        memory += dt*(shifts[(0,s)] * obs_rate *obs_mem_size + shifts[(1,s)] *pro_rate* (pro_mem_size - obs_mem_size)   - shifts[(2,s)] *int( (down_rate)))
         
-        num_obs += shifts[(0,s)] * obs_rate - shifts[(1,s)]  * pro_rate
+        num_obs += dt*(shifts[(0,s)] * obs_rate - shifts[(1,s)]  * pro_rate)
         
-        num_pro += shifts[(1,s)] * pro_rate - shifts[(2,s)] * down_rate
+        num_pro += dt*(shifts[(1,s)] * pro_rate - shifts[(2,s)] * down_rate)
         
-        num_down += shifts[(2,s)] * down_rate
+        num_down += dt*(shifts[(2,s)] * down_rate)
         
         # require data sets to be available for processing for processing to occur
         model.Add(num_obs >= pro_rate).OnlyEnforceIf(shifts[(1,s)])

@@ -50,14 +50,14 @@ dt = 30
 time = [dt*t for t in all_T]
 
 (model, shifts, num_obs, num_pro, num_down, memory) = CPModel_SC_data(any_ilum_list,gnd_stat_list, interval,start_shift, obs_mem_size, obs_size, pro_mem_size,
-                    pro_size, down_rate, memory_init, memory_storage, num_obs_init)
+                    pro_size, down_rate, memory_init, memory_storage, num_obs_init,dt)
 
 print("CP Model made")
 solver = cp_model.CpSolver()  
 
-solver.parameters.max_time_in_seconds =1000
+solver.parameters.max_time_in_seconds =300
 solver.parameters.log_search_progress = True
-solver.parameters.num_search_workers = 4
+solver.parameters.num_search_workers = 8
 
 status = solver.Solve(model)
 if status == cp_model.OPTIMAL :
