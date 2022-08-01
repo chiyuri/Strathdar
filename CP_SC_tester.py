@@ -28,7 +28,7 @@ gnd_stat_list = [datals[i][0] for i in range(0, len(datals))]
 FLOP_to_proc = 920
 FLOPS_available = 92 # giga flops
 
-interval = 300
+interval = 80
 start_shift=0
 
 obs_dataset_mem = int( 15000/100 )# in 0.1 kB
@@ -44,7 +44,7 @@ down_rate = int(down_rate_mem/pro_dataset_mem)
 
 
 memory_init = 0
-memory_storage = int( 64e6) # 64GB total memory
+memory_storage = int( 32e3) # 64GB total memory in 0.1kB
 num_obs_init = 0
 all_T = range(interval)
 all_action = range(4)
