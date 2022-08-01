@@ -92,7 +92,7 @@ df = pd.DataFrame(data)
 pf.ganttChart(df,titles)
 
 
-(memoryLogs, num_logs) = post.memoryLogAssem(schedule, obs_mem_size, pro_mem_size, obs_rate, pro_rate, down_rate)
+(memoryLogs, num_logs) = post.memoryLogAssem(schedule, obs_mem_size, pro_mem_size, obs_size, pro_size, down_rate)
 
 pf.memoryGraph(memoryLogs,time)
 
