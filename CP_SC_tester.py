@@ -30,21 +30,27 @@ FLOPS_available = 92 # giga flops
 
 interval = 300
 start_shift=0
-obs_mem_size = 1500
-obs_rate = 100 
-pro_mem_size = 30
-pro_rate = math.ceil(FLOP_to_proc/FLOPS_available)
-down_rate = 32
+
+obs_dataset_mem = 1500
+obs_size = 100 
+obs_mem_size = math.ceil(obs_dataset_mem/obs_size)  ## need to add code to check error from rounding
+
+pro_size = math.ceil(FLOP_to_proc/FLOPS_available)
+pro_dataset_mem = 30
+pro_mem_size = math.ceil(pro_dataset_mem/pro_size)
+
+down_rate = 32  # in KB per second
+
 memory_init = 0
-memory_storage = 10000
+memory_storage = int( 64e6) # 64GB total memory
 num_obs_init = 0
 all_T = range(interval)
 all_action = range(4)
 dt = 30
 time = [dt*t for t in all_T]
 
-(model, shifts, num_obs, num_pro, num_down, memory) = CPModel_SC_data(any_ilum_list,gnd_stat_list, interval,start_shift, obs_mem_size, obs_rate, pro_mem_size,
-                    pro_rate, down_rate, memory_init, memory_storage, num_obs_init)
+(model, shifts, num_obs, num_pro, num_down, memory) = CPModel_SC_data(any_ilum_list,gnd_stat_list, interval,start_shift, obs_mem_size, obs_size, pro_mem_size,
+                    pro_size, down_rate, memory_init, memory_storage, num_obs_init)
 
 print("CP Model made")
 solver = cp_model.CpSolver()  
