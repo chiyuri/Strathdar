@@ -31,15 +31,17 @@ FLOPS_available = 92 # giga flops
 interval = 300
 start_shift=0
 
-obs_dataset_mem = 1500
-obs_size = 100 
-obs_mem_size = math.ceil(obs_dataset_mem/obs_size)  ## need to add code to check error from rounding
+obs_dataset_mem = int( 15000/100 )# in 0.1 kB
+obs_rate = 100
 
-pro_size = math.ceil(FLOP_to_proc/FLOPS_available)
-pro_dataset_mem = 30
-pro_mem_size = math.ceil(pro_dataset_mem/pro_size)
 
-down_rate = 32  # in KB per second
+pro_rate = math.ceil(FLOP_to_proc/FLOPS_available)
+pro_dataset_mem = int(300 /100)  # in 0.1 kB
+
+ 
+down_rate_mem = 320  # in 0.1 kB per second
+down_rate = int(down_rate_mem/pro_dataset_mem)
+
 
 memory_init = 0
 memory_storage = int( 64e6) # 64GB total memory
@@ -49,15 +51,15 @@ all_action = range(4)
 dt = 30
 time = [dt*t for t in all_T]
 
-(model, shifts, num_obs, num_pro, num_down, memory) = CPModel_SC_data(any_ilum_list,gnd_stat_list, interval,start_shift, obs_mem_size, obs_size, pro_mem_size,
-                    pro_size, down_rate, memory_init, memory_storage, num_obs_init,dt)
+(model, shifts, num_obs, num_pro, num_down, memory) = CPModel_SC_data(any_ilum_list,gnd_stat_list, interval,start_shift, obs_dataset_mem, obs_rate, pro_dataset_mem,
+                    pro_rate, down_rate, memory_init, memory_storage, num_obs_init,dt)
 
 print("CP Model made")
 solver = cp_model.CpSolver()  
 
 solver.parameters.max_time_in_seconds =300
 solver.parameters.log_search_progress = True
-solver.parameters.num_search_workers = 8
+solver.parameters.num_search_workers = 4
 
 status = solver.Solve(model)
 if status == cp_model.OPTIMAL :
@@ -92,7 +94,7 @@ df = pd.DataFrame(data)
 pf.ganttChart(df,titles)
 
 
-(memoryLogs, num_logs) = post.memoryLogAssem(schedule, obs_mem_size, pro_mem_size, obs_size, pro_size, down_rate)
+(memoryLogs, num_logs) = post.memoryLogAssem(schedule, obs_dataset_mem, pro_dataset_mem, obs_rate, pro_rate, down_rate)
 
 pf.memoryGraph(memoryLogs,time)
 
