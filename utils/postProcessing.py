@@ -31,18 +31,18 @@ def memoryLogAssem(schedule, obs_mem_size, pro_mem_size, obs_rate, pro_rate, dow
         
         # for observation
         num_log[0][s] = num[0]
-        mem_log[0][s] = num_log[0][s] * obs_mem_size
+        mem_log[0][s] = 0.1*num_log[0][s] * obs_mem_size
         
         # for processing
         num_log[1][s] = num[1]
-        mem_log[1][s] = num_log[1][s] * pro_mem_size
+        mem_log[1][s] = 0.1*num_log[1][s] * pro_mem_size
         
         # for downlinking
         
         num_log[2][s] = num[2] * down_rate
         
         # overall memory use
-        mem_log[3][s] = mem_log[0][s]+mem_log[1][s]
+        mem_log[3][s] = 0.1*mem_log[0][s]+mem_log[1][s]
     
     
     
