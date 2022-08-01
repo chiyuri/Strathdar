@@ -38,14 +38,14 @@ memory_storage = 64000
 num_obs_init = 0
 
 
-(model, shifts) = CPModel_SC_data(any_ilum_list,gnd_stat_list, interval,start_shift, obs_mem_size, obs_rate, pro_mem_size,
+(model, shifts, num_obs, num_pro, num_down, memory) = CPModel_SC_data(any_ilum_list,gnd_stat_list, interval,start_shift, obs_mem_size, obs_rate, pro_mem_size,
                     pro_rate, down_rate, memory_init, memory_storage, num_obs_init)
 
 solver = cp_model.CpSolver()
 
 solver.parameters.max_time_in_seconds = 600
 solver.parameters.log_search_progress = True
-solver.parameters.num_search_workers = 8
+solver.parameters.num_search_workers = 4
 
 status = solver.Solve(model)
 if status == cp_model.OPTIMAL :

@@ -30,10 +30,13 @@ def ganttChart(df,titles):
 def memoryGraph(memoryLog, time):
     
     plt.figure(2)
-    plt.plot(time,memoryLog)
+    plt.plot(time,memoryLog[0])
+    plt.plot(time,memoryLog[1])
+    plt.plot(time,memoryLog[3])
     plt.title("Storage use over time")
     plt.xlabel("time (s)")
     plt.ylabel("memory used (kB)")
+    plt.legend(["Observation Data set memory use","processed data set memory use","overall memory use"])
     ax = plt.gca()
     ax.set_xticklabels([])
     
@@ -59,3 +62,21 @@ def downlinkingGraph(downlink, time):
     plt.ylabel("downlinking (y/n)")
     ax = plt.gca()
     ax.set_xticklabels([])
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    

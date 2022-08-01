@@ -11,7 +11,8 @@ import math
 import pandas as pd
 from ortools.sat.python import cp_model
 from Solver.CPModel_SC import CPModel_SC_data
-from plotting import plotFunctions as pf
+from utils import plotFunctions as pf
+from utils import postProcessing as post
 
 data = pd.read_csv("Data/30s, 1d, polar/Illuminator view data log.csv")
 any_ilum_list = data.values.tolist()
@@ -27,7 +28,7 @@ gnd_stat_list = [datals[i][0] for i in range(0, len(datals))]
 FLOP_to_proc = 920
 FLOPS_available = 92 # giga flops
 
-interval = 50
+interval = 300
 start_shift=0
 obs_mem_size = 1500
 obs_rate = 100 
@@ -39,8 +40,8 @@ memory_storage = 10000
 num_obs_init = 0
 all_T = range(interval)
 all_action = range(4)
-dt = 1
-
+dt = 30
+time = [dt*t for t in all_T]
 
 (model, shifts, num_obs, num_pro, num_down, memory) = CPModel_SC_data(any_ilum_list,gnd_stat_list, interval,start_shift, obs_mem_size, obs_rate, pro_mem_size,
                     pro_rate, down_rate, memory_init, memory_storage, num_obs_init)
@@ -50,7 +51,7 @@ solver = cp_model.CpSolver()
 
 solver.parameters.max_time_in_seconds =1000
 solver.parameters.log_search_progress = True
-solver.parameters.num_search_workers = 8
+solver.parameters.num_search_workers = 4
 
 status = solver.Solve(model)
 if status == cp_model.OPTIMAL :
@@ -62,16 +63,20 @@ else:
     print('Solution: no feasible solution found')
 
 
+'''
+post processing
+'''
     
 # Creates pd dataframe to then be used to make gantt chart
 titles = ['Observing', 'Processing', 'downlinking', 'idling']
 data = []
 actionABS = []
+schedule = [[0 for s in all_T] for a in all_action]
 for s in all_T:
     for a in all_action:
         if solver.Value(shifts[(a,s)]) == 1:
             actionABS.append(titles[a])
-    
+            schedule[a][s] = 1
     
     
     tempDict = dict(start = s*dt, duration = dt, end = (s+1)*dt, action = actionABS[s])
@@ -81,7 +86,9 @@ df = pd.DataFrame(data)
 pf.ganttChart(df,titles)
 
 
+(memoryLogs, num_logs) = post.memoryLogAssem(schedule, obs_mem_size, pro_mem_size, obs_rate, pro_rate, down_rate)
 
+pf.memoryGraph(memoryLogs,time)
 
 
 
