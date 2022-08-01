@@ -27,7 +27,7 @@ gnd_stat_list = [datals[i][0] for i in range(0, len(datals))]
 FLOP_to_proc = 920
 FLOPS_available = 92 # giga flops
 
-interval = 1000
+interval = 50
 start_shift=0
 obs_mem_size = 1500
 obs_rate = 100 
@@ -45,6 +45,7 @@ dt = 1
 (model, shifts, num_obs, num_pro, num_down, memory) = CPModel_SC_data(any_ilum_list,gnd_stat_list, interval,start_shift, obs_mem_size, obs_rate, pro_mem_size,
                     pro_rate, down_rate, memory_init, memory_storage, num_obs_init)
 
+print("CP Model made")
 solver = cp_model.CpSolver()  
 
 solver.parameters.max_time_in_seconds =1000
@@ -78,3 +79,12 @@ for s in all_T:
 df = pd.DataFrame(data)
 
 pf.ganttChart(df,titles)
+
+
+
+
+
+
+
+
+
