@@ -11,6 +11,8 @@ Created on Mon Aug  1 11:13:01 2022
 
 def memoryLogAssem(schedule, obs_mem_size, pro_mem_size, obs_rate, pro_rate, down_rate):
     
+    # creates graphs logging the memory used for a given schedule
+    
     all_action = range(len(schedule))
     all_shifts = range(len(schedule[0]))
     

@@ -31,12 +31,12 @@ gnd_stat_list = [datals[i][0] for i in range(0, len(datals))]
 
 
 # used to define how long it takes to process each dataset
-FLOP_to_proc = 4000
+FLOP_to_proc = 1000
 FLOPS_available = 100 # giga flops
 
 
 
-interval = 1000 # length of interval to be optimised
+interval = 200 # length of interval to be optimised
 start_shift=0
 
 obs_dataset_mem = int( 150e6/100 )# in 0.1 kB   
@@ -81,7 +81,7 @@ solving the CP model
 
 solver = cp_model.CpSolver()  
 
-solver.parameters.max_time_in_seconds =600
+solver.parameters.max_time_in_seconds =300
 solver.parameters.log_search_progress = True
 solver.parameters.num_search_workers = 8
 

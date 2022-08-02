@@ -116,7 +116,7 @@ def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_s
         
         #memory += (shifts[(0,s)] * obs_rate *obs_mem_size + shifts[(1,s)] *pro_rate* (pro_mem_size - obs_mem_size)   - shifts[(2,s)] *int( (down_rate)))
         #memory += *obs_mem_size + num_pro*pro_mem_size
-        memory += shifts[(0,s)] * obs_rate *obs_mem_size  + shifts[(1,s)] *pro_rate* (pro_mem_size - obs_mem_size)- shifts[(2,s)] *down_rate
+        memory += dt*(shifts[(0,s)] * obs_rate *obs_mem_size  + shifts[(1,s)] *pro_rate* (pro_mem_size - obs_mem_size)- shifts[(2,s)] *down_rate)
         # require data sets to be available for processing for processing to occur
         model.Add(num_obs >= pro_rate).OnlyEnforceIf(shifts[(1,s)])
         # requires processed data sets to available for downlinking to occur

@@ -13,8 +13,12 @@ import plotly.io as pio
 pio.renderers.default='svg'
 
 
-# function for creating Gantt chart from a set of tasks completed at associated times, the time index they are against, and the task names
+
 def ganttChart(df,titles):
+    
+    # function for creating Gantt chart from a set of tasks completed at associated times, the time index they are against, and the task names
+    
+    
     
     fig, ax = plt.subplots(1, figsize = (24,6))
     
@@ -28,6 +32,8 @@ def ganttChart(df,titles):
     """
     
 def memoryGraph(memoryLog, time):
+    
+    #Creates a plot of the memory used storying observed and processed datasets as well as the total memory use
     
     plt.figure(2)
     plt.plot(time,memoryLog[0])
@@ -43,6 +49,8 @@ def memoryGraph(memoryLog, time):
     
 def ProObsGraph(ProObsLog,time):
     
+    # plots the number of processed and observed datasets over time as well as overall memory use
+    
     plt.figure(3)
     plt.plot(time, ProObsLog)
     plt.title("Processed and Observations over time")
@@ -55,6 +63,8 @@ def ProObsGraph(ProObsLog,time):
     
 def downlinkingGraph(downlink, time):
     
+    # plots whenever the satellite is downlinking 
+    
     plt.figure(4)
     plt.plot(time, downlink)
     plt.title("downlinking activity over time")
@@ -66,6 +76,7 @@ def downlinkingGraph(downlink, time):
 
 def ObsValueGraph(ilum_value_list,target_ilum, action, time, all_T, all_sats):
     
+    #plots the observed value and the value available
     
     allvalue = [0 for t in all_T]
     valueObs = [0 for t in all_T]
