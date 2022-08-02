@@ -41,7 +41,7 @@ def memoryGraph(memoryLog, time):
     plt.plot(time,memoryLog[3])
     plt.title("Storage use over time")
     plt.xlabel("time (s)")
-    plt.ylabel("memory used (kB)")
+    plt.ylabel("memory used (0.1kB)")
     plt.legend(["Observation Data set memory use","processed data set memory use","overall memory use"])
     ax = plt.gca()
     ax.set_xticklabels([])

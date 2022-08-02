@@ -36,7 +36,7 @@ FLOPS_available = 100 # giga flops
 
 
 
-interval = 200 # length of interval to be optimised
+interval = 2800 # length of interval to be optimised
 start_shift=0
 
 obs_dataset_mem = int( 150e6/100 )# in 0.1 kB   
@@ -53,7 +53,7 @@ down_rate = int(down_rate_mem/pro_dataset_mem)  # the number of processed datase
 
 
 memory_init = 0
-memory_storage = int( 64e9) # 64GB total memory in 0.1kB
+memory_storage = int( 64e10) # 64GB total memory in 0.1kB
 num_obs_init = 0
 all_T = range(interval)
 all_action = range(4)
@@ -133,7 +133,7 @@ df = pd.DataFrame(data)
 pf.ganttChart(df,titles)
 
 
-(memoryLogs, num_logs) = post.memoryLogAssem(schedule, obs_dataset_mem, pro_dataset_mem, obs_rate, pro_rate, down_rate)
+(memoryLogs, num_logs) = post.memoryLogAssem(schedule, obs_dataset_mem, pro_dataset_mem, obs_rate, pro_rate, down_rate,dt)
 pf.memoryGraph(memoryLogs,time)
 
 

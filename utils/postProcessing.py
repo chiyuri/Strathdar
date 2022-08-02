@@ -9,7 +9,7 @@ Created on Mon Aug  1 11:13:01 2022
 
 
 
-def memoryLogAssem(schedule, obs_mem_size, pro_mem_size, obs_rate, pro_rate, down_rate):
+def memoryLogAssem(schedule, obs_mem_size, pro_mem_size, obs_rate, pro_rate, down_rate,dt):
     
     # creates graphs logging the memory used for a given schedule
     
@@ -33,11 +33,11 @@ def memoryLogAssem(schedule, obs_mem_size, pro_mem_size, obs_rate, pro_rate, dow
         
         # for observation
         num_log[0][s] = num[0]
-        mem_log[0][s] = 0.1*num_log[0][s] * obs_mem_size
+        mem_log[0][s] = num_log[0][s] * obs_mem_size*dt
         
         # for processing
         num_log[1][s] = num[1]
-        mem_log[1][s] = 0.1*num_log[1][s] * pro_mem_size
+        mem_log[1][s] = num_log[1][s] * pro_mem_size*dt
         
         # for downlinking
         
