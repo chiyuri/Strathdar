@@ -63,9 +63,37 @@ def downlinkingGraph(downlink, time):
     ax = plt.gca()
     ax.set_xticklabels([])
     
-    
 
+def ObsValueGraph(ilum_value_list,target_ilum, action, time, all_T, all_sats):
     
+    
+    allvalue = [0 for t in all_T]
+    valueObs = [0 for t in all_T]
+    
+    for t in all_T:
+        allvalue[t] = max(ilum_value_list[t][sat] for sat in all_sats)
+        valueObs[t] = sum(target_ilum[sat][t]*ilum_value_list[t][sat] for sat in all_sats)
+        valueObsCheck = allvalue[t]* action[0][t]    
+        if valueObsCheck != valueObs[t]:
+            print("error in targeting")
+            print("csp targets sat with value %i" % valueObs[t])
+            print("highest value available is %i" % valueObsCheck)
+    
+    
+    
+    
+    plt.figure(5)
+    
+    plt.plot(time, allvalue)
+    plt.plot(time, valueObs)
+    
+    plt.title("Iluminator value, tatgeted and available")
+    plt.xlabel("time (s)")
+    plt.ylabel("iluminator value (avg objects detected)")
+    plt.legend(["Ilum value available","Target Ilum Value"])
+    ax = plt.gca()
+    ax.set_xticklabels([])
+    ax.set_yticklabels([])
     
     
     

@@ -91,12 +91,15 @@ titles = ['Observing', 'Processing', 'downlinking', 'idling']
 data = []
 actionABS = []
 schedule = [[0 for s in all_T] for a in all_action]
+target_ilum_val = [[0 for s in all_T] for sat in all_sats]
 for s in all_T:
     for a in all_action:
         if solver.Value(shifts[(a,s)]) == 1:
             actionABS.append(titles[a])
             schedule[a][s] = 1
-    
+    for sat in all_sats:
+        if solver.Value(target_ilum[(sat,s)]) == 1:
+            target_ilum_val[sat][s] = 1
     
     tempDict = dict(start = s*dt, duration = dt, end = (s+1)*dt, action = actionABS[s])
     data.append(tempDict)
@@ -108,6 +111,9 @@ pf.ganttChart(df,titles)
 (memoryLogs, num_logs) = post.memoryLogAssem(schedule, obs_dataset_mem, pro_dataset_mem, obs_rate, pro_rate, down_rate)
 
 pf.memoryGraph(memoryLogs,time)
+
+
+pf.ObsValueGraph(ilum_value_list,target_ilum_val, schedule, time, all_T, all_sats)
 
 
 
