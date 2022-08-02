@@ -11,6 +11,39 @@ from ortools.sat.python import cp_model
 #from file_recall import file_recall
 import os
 
+'''
+Used to generate a Constraint Programming model using google OR tools for Strathcube under 
+conditions where it can do some processing on board but no real time processing
+
+Inputs:
+    
+Any_Ilum_list: boolean list of lists containing the illuminators in view over time 
+Gnd_stat_list: boolean list containing whether a ground station is in view
+interval: the interval to be optimised over
+start_shift: the shift that the model starts at (with reference to the indesx position in input lists)
+obs_mem_size: the memory used to store one unit of observed dataset
+obs_rate: the rate at which observed dataset units are produced while observing
+pro_mem_size: the memory used to store one unit of processed dataset
+pro_rate: the rate at which observed dataset units are processed into processed dataset units
+down_rate: the rate at which processed data set units can be downlinked
+memory_init: the initial memory in use
+num_obs_init: the number of observations already stored
+dt: the number of seconds for each shift
+ilum_value_list: the value associated with each illiminator through time
+
+
+Outputs:
+
+model: the CP model
+shifts: dict containing google or bool variables and used to describe what action the satellite is taking for a given shift
+target_ilum: the illuminator targeted at a given shift
+num_obs: the number of observations stored at the end of the interval
+num_pro: the number of processed datasets stored at the end of the interval
+num_down: the number of downlinked datasets at the end of the interval
+memory: the memory in use at the end of the interval
+'''
+
+
 
 
 def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_size, obs_rate, pro_mem_size,
