@@ -20,6 +20,10 @@ any_ilum_list = data.values.tolist()
 #read in the downlink data times
 data = pd.read_csv("Data/30s, 1d, polar/Communications Data log.csv")
 datals= data.values.tolist() 
+
+data = pd.read_csv("Data/30s, 1d, polar/Avg objects Detection log.csv")
+ilum_value_list = data.values.tolist()
+
 # chages downlink from list of lists to 1D list
 gnd_stat_list = [datals[i][0] for i in range(0, len(datals))]
 
@@ -31,7 +35,7 @@ FLOPS_available = 92 # giga flops
 interval = 80
 start_shift=0
 
-obs_dataset_mem = int( 15000/100 )# in 0.1 kB
+obs_dataset_mem = int( 15e9/100 )# in 0.1 kB
 obs_rate = 100
 
 
@@ -44,22 +48,29 @@ down_rate = int(down_rate_mem/pro_dataset_mem)
 
 
 memory_init = 0
-memory_storage = int( 32e3) # 64GB total memory in 0.1kB
+memory_storage = int( 64e9) # 64GB total memory in 0.1kB
 num_obs_init = 0
 all_T = range(interval)
 all_action = range(4)
+all_sats = range(66)
 dt = 30
 time = [dt*t for t in all_T]
 
-(model, shifts, num_obs, num_pro, num_down, memory) = CPModel_SC_data(any_ilum_list,gnd_stat_list, interval,start_shift, obs_dataset_mem, obs_rate, pro_dataset_mem,
-                    pro_rate, down_rate, memory_init, memory_storage, num_obs_init,dt)
+for t in all_T:
+    for s in all_sats:
+        ilum_value_list[t][s] = int(ilum_value_list[t][s]*10000)
+
+
+
+(model, shifts, target_ilum, num_obs, num_pro, num_down, memory) = CPModel_SC_data(any_ilum_list,gnd_stat_list, interval,start_shift, obs_dataset_mem, obs_rate, pro_dataset_mem,
+                    pro_rate, down_rate, memory_init, memory_storage, num_obs_init,dt, ilum_value_list)
 
 print("CP Model made")
 solver = cp_model.CpSolver()  
 
 solver.parameters.max_time_in_seconds =300
 solver.parameters.log_search_progress = True
-solver.parameters.num_search_workers = 4
+solver.parameters.num_search_workers = 8
 
 status = solver.Solve(model)
 if status == cp_model.OPTIMAL :

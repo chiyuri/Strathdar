@@ -14,7 +14,7 @@ import os
 
 
 def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_size, obs_rate, pro_mem_size,
-                    pro_rate, down_rate, memory_init, memory_storage, num_obs_init,dt):
+                    pro_rate, down_rate, memory_init, memory_storage, num_obs_init,dt, ilum_value_list):
     
     model = cp_model.CpModel()
     
@@ -30,9 +30,16 @@ def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_s
     
     # making the boolean variable which contains the action chosen by the optimiser
     shifts = {}
+    target_ilum = {}
+    index = {}
     for s in all_mod_shifts:
+        
+        
         for a in all_action:
             shifts[(a,s)] = model.NewBoolVar('Shift_A%i_S%i' % (a,s))
+        for sat in all_sats:
+            target_ilum[(sat,s)] = model.NewBoolVar('Target_Ilum_Sat%i_S%i' % (sat,s))
+            
             #indexed positions are:
             # 0 = observing
             # 1 = processing
@@ -43,14 +50,19 @@ def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_s
     
     for s in all_mod_shifts:
         model.AddExactlyOne(shifts[(a,s)] for a in all_action)
-
+        model.AddAtMostOne(target_ilum[(sat,s)] for sat in all_sats)
+        
+        
     for s in all_mod_shifts:
         # requires an illuminator to be in view for observing to occur
         AnyIlum = sum(Any_Ilum_list[s][sat] for sat in all_sats)
         model.Add( AnyIlum > 0).OnlyEnforceIf(shifts[(0,s)])
         # requires a ground station to be in view for downlinking to occur
         model.Add(Gnd_stat_list[s] > 0).OnlyEnforceIf(shifts[(2,s)])
-   
+        
+        model.Add(sum(target_ilum[(sat,s)] for sat in all_sats) > 0 ).OnlyEnforceIf(shifts[(0,s)])
+        model.Add(sum(target_ilum[(sat,s)] for sat in all_sats) == 0 ).OnlyEnforceIf(shifts[(0,s)].Not())
+        
     if b == 0 :
         memory = int(0) 
         
@@ -79,11 +91,11 @@ def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_s
         #requires used memory to remain below memory available
         model.Add(memory < memory_storage)
         
-        
-    model.Maximize(sum(4*shifts[(2,s)] +shifts[(1,s)] for s in all_mod_shifts))
     
+    model.Maximize(sum(4*shifts[(2,s)] + sum( target_ilum[(sat,s)]*ilum_value_list[s][sat] for sat in all_sats) for s in all_mod_shifts))
+    #model.Maximize 
     
-    return model, shifts, num_obs, num_pro, num_down, memory
+    return model, shifts, target_ilum, num_obs, num_pro, num_down, memory
         
         
         
