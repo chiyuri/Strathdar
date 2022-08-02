@@ -45,13 +45,22 @@ def memoryGraph(memoryLog, time):
     plt.legend(["Observation Data set memory use","processed data set memory use","overall memory use"])
     ax = plt.gca()
     ax.set_xticklabels([])
-    
+
+    plt.figure(3)
+    plt.plot(time,memoryLog[1])
+    plt.plot(time,memoryLog[2])
+    plt.title("storage used and downlniked over time ")
+    plt.legend(["Processed","Downlinked"])
+    plt.xlabel("time (s)")
+    plt.ylabel("memory used (0.1kB")
+    ax = plt.gca()
+    ax.set_xticklabels([])    
     
 def ProObsGraph(ProObsLog,time):
     
     # plots the number of processed and observed datasets over time as well as overall memory use
     
-    plt.figure(3)
+    plt.figure(4)
     plt.plot(time, ProObsLog)
     plt.title("Processed and Observations over time")
     plt.xlabel("time (s)")
@@ -65,7 +74,7 @@ def downlinkingGraph(downlink, time):
     
     # plots whenever the satellite is downlinking 
     
-    plt.figure(4)
+    plt.figure(5)
     plt.plot(time, downlink)
     plt.title("downlinking activity over time")
     plt.xlabel("time (s)")
@@ -93,7 +102,7 @@ def ObsValueGraph(ilum_value_list,target_ilum, action, time, all_T, all_sats):
     
     
     
-    plt.figure(5)
+    plt.figure(6)
     
     plt.plot(time, allvalue)
     plt.plot(time, valueObs)
