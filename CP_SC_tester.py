@@ -16,15 +16,15 @@ from utils import plotFunctions as pf
 from utils import postProcessing as post
 
 #read in if a illuminator is in view 
-data = pd.read_csv("Data/30s, 1d, polar/Illuminator view data log.csv")
+data = pd.read_csv("Data/60s, 5d, polar/Illuminator view data log.csv")
 any_ilum_list = data.values.tolist()
 
 #read in the downlink data times
-data = pd.read_csv("Data/30s, 1d, polar/Communications Data log.csv")
+data = pd.read_csv("Data/60s, 5d, polar/Communications Data log.csv")
 datals= data.values.tolist() 
 
 #  reads in which illuminators are visible
-data = pd.read_csv("Data/30s, 1d, polar/Avg objects Detection log.csv")
+data = pd.read_csv("Data/60s, 5d, polar/Avg objects Detection log.csv")
 ilum_value_list = data.values.tolist()
 
 # chages downlink from list of lists to 1D list
@@ -37,7 +37,7 @@ FLOPS_available = 100 # giga flops
 
 
 hint = 0
-interval = 1000 # length of interval to be optimised
+interval = 7000 # length of interval to be optimised
 start_shift=0
 
 obs_dataset_mem = int( 150e6/100 )# in 0.1 kB   
@@ -52,15 +52,17 @@ pro_dataset_mem = int(300 /100)  # in 0.1 kB
 down_rate_mem = 320  # in 0.1 kB per second
 down_rate = int(down_rate_mem/pro_dataset_mem)  # the number of processed dataset units the satellite can downlink per second
 
-num_pro_init=0
+
 memory_init = 0
 num_obs_init = 0
+num_pro_init=0
+num_down_init = 0
 memory_storage = int( 64e10) # 64GB total memory in 0.1kB
 num_obs_init = 0
 all_T = range(interval)
 all_action = range(4)
 all_sats = range(66)
-dt = 30
+dt = 60
 time = [dt*t for t in all_T]
 
 for t in all_T:
@@ -79,7 +81,7 @@ creating cp model
 '''
 
 (model, shifts, target_ilum, num_obs, num_pro, num_down, memory) = CPModel_SC_data(any_ilum_list,gnd_stat_list, interval,start_shift, obs_dataset_mem, obs_rate, pro_dataset_mem,
-                    pro_rate, down_rate, memory_init, memory_storage, num_obs_init,dt, ilum_value_list)
+                    pro_rate, down_rate, memory_init, memory_storage, num_obs_init, num_pro_init, num_down_init,dt, ilum_value_list)
 
 print("CP Model made")
 
@@ -93,7 +95,7 @@ solving the CP model
 
 solver = cp_model.CpSolver()  
 
-solver.parameters.max_time_in_seconds =300
+solver.parameters.max_time_in_seconds =2400
 solver.parameters.log_search_progress = True
 solver.parameters.num_search_workers = 8
 

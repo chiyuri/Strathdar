@@ -47,7 +47,7 @@ memory: the memory in use at the end of the interval
 
 
 def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_size, obs_rate, pro_mem_size,
-                    pro_rate, down_rate, memory_init, memory_storage, num_obs_init,dt, ilum_value_list):
+                    pro_rate, down_rate, memory_init, memory_storage, num_obs_init, num_pro_init, num_down_init,dt, ilum_value_list):
     
     model = cp_model.CpModel()
     
@@ -105,7 +105,8 @@ def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_s
     else:
         memory = memory_init  # needs to be replaced with a file read in
         num_obs = num_obs_init
-        
+        num_pro = num_pro_init
+        num_down = num_down_init
     for s in all_mod_shifts:
         
         num_obs += dt*(shifts[(0,s)] * obs_rate - shifts[(1,s)]  * pro_rate) #100 = one 1 seconde dataset
