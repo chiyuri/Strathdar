@@ -103,6 +103,7 @@ solver.parameters.num_search_workers = 8
 status = solver.Solve(model)
 if status == cp_model.OPTIMAL :
     print('Solution: optimal found')
+    print(f'Objective value achieved = {solver.ObjectiveValue()} ')
     print('\nStatistics')
     print('  - conflicts      : %i' % solver.NumConflicts())
     print('  - branches       : %i' % solver.NumBranches())
@@ -111,6 +112,7 @@ if status == cp_model.OPTIMAL :
     
 elif status == cp_model.FEASIBLE:
     print('Solution: feasible found')
+    print(f'Objective value achieved = {solver.ObjectiveValue()} ')
     print('\nStatistics')
     print('  - conflicts      : %i' % solver.NumConflicts())
     print('  - branches       : %i' % solver.NumBranches())
