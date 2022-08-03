@@ -36,8 +36,8 @@ FLOP_to_proc = 1000
 FLOPS_available = 100 # giga flops
 
 
-hint = 0
-interval = 2800 # length of interval to be optimised
+hint = 1
+interval = 1000 # length of interval to be optimised
 start_shift=0
 
 obs_dataset_mem = int( 150e6/100 )# in 0.1 kB   
