@@ -47,7 +47,7 @@ memory: the memory in use at the end of the interval
 
 
 def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_size, obs_rate, pro_mem_size,
-                    pro_rate, down_rate, memory_init, memory_storage, num_obs_init, num_pro_init, num_down_init,dt, ilum_value_list):
+                    pro_rate, down_rate,down_mem_size, memory_init, memory_storage, num_obs_init, num_pro_init, num_down_init,dt, ilum_value_list):
     
     model = cp_model.CpModel()
     
@@ -110,20 +110,20 @@ def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_s
         num_pro = num_pro_init
         num_down = num_down_init
         
-    numobsLog = []  
-    numproLog = []
-    numdownLog = []
+    
+    Log = [[],[],[],[]]
     for s in all_mod_shifts:
         
         num_obs += dt*(shifts[(0,s)] * obs_rate - shifts[(1,s)]  * pro_rate) #100 = one 1 seconde dataset
-        numobsLog.append(num_obs) 
+        Log[0].append(num_obs) 
         num_pro += dt*(shifts[(1,s)] * pro_rate - shifts[(2,s)] * down_rate) #100 = one 1 seconde dataset
-        numproLog.append(num_pro)
+        Log[1].append(num_pro)
         num_down += dt*(shifts[(2,s)] * down_rate) #100 = one 1 second dataset
-        numdownLog.append(num_down)
+        Log[2].append(num_down)
         #memory += (shifts[(0,s)] * obs_rate *obs_mem_size + shifts[(1,s)] *pro_rate* (pro_mem_size - obs_mem_size)   - shifts[(2,s)] *int( (down_rate)))
         #memory += *obs_mem_size + num_pro*pro_mem_size
-        memory += dt*(shifts[(0,s)] * obs_rate *obs_mem_size  + shifts[(1,s)] *pro_rate* (pro_mem_size - obs_mem_size)- shifts[(2,s)] *down_rate)
+        memory += dt*(shifts[(0,s)] * obs_rate *obs_mem_size  + shifts[(1,s)] *pro_rate* (pro_mem_size - obs_mem_size)- shifts[(2,s)] *down_rate*down_mem_size)
+        Log[3].append(memory)
         # require data sets to be available for processing for processing to occur
         model.Add(num_obs >= pro_rate*dt).OnlyEnforceIf(shifts[(1,s)])
         # requires processed data sets to available for downlinking to occur
@@ -135,7 +135,7 @@ def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_s
     model.Maximize(sum(1*shifts[(2,s)] +  sum( target_ilum[(sat,s)]*ilum_value_list[s][sat] for sat in all_sats) for s in all_mod_shifts))
     
     
-    return model, shifts, target_ilum, num_obs, num_pro, num_down, memory, numobsLog, numproLog, numdownLog
+    return model, shifts, target_ilum, num_obs, num_pro, num_down, memory, Log
         
 
   

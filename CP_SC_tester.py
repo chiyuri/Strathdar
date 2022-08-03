@@ -41,7 +41,7 @@ hint = 0
 interval = 300 # length of interval to be optimised
 start_shift=0
 
-obs_dataset_mem = int( 150e6/100 )# in 0.1 kB   
+obs_dataset_mem = int( 150e3/100 )# in 0.1 kB   
 obs_rate = 100                    # used to allow the observations to be processed in parts while remaining integers
 
 
@@ -52,13 +52,13 @@ pro_dataset_mem = int(300 /100)  # in 0.1 kB
  
 down_rate_mem = 320  # in 0.1 kB per second
 down_rate = int(down_rate_mem/pro_dataset_mem)  # the number of processed dataset units the satellite can downlink per second
-
+down_dataset_mem = int(down_rate_mem/down_rate)
 
 memory_init = 0
 num_obs_init = 0
 num_pro_init=0
 num_down_init = 0
-memory_storage = int( 64e10) # 64GB total memory in 0.1kB
+memory_storage = int( 64e7) # 64GB total memory in 0.1kB
 num_obs_init = 0
 all_T = range(interval)
 all_action = range(4)
@@ -81,8 +81,8 @@ if hint == 1:
 creating cp model
 '''
 
-(model, shifts, target_ilum, num_obs, num_pro, num_down, memory, numobsLog, numproLog, numdownLog) = CPModel_SC_data(any_ilum_list,gnd_stat_list, interval,start_shift, obs_dataset_mem, obs_rate, pro_dataset_mem,
-                    pro_rate, down_rate, memory_init, memory_storage, num_obs_init, num_pro_init, num_down_init,dt, ilum_value_list)
+(model, shifts, target_ilum, num_obs, num_pro, num_down, memory, Log) = CPModel_SC_data(any_ilum_list,gnd_stat_list, interval,start_shift, obs_dataset_mem, obs_rate, pro_dataset_mem,
+                    pro_rate, down_rate,down_dataset_mem, memory_init, memory_storage, num_obs_init, num_pro_init, num_down_init,dt, ilum_value_list)
 
 print("CP Model made")
 
@@ -127,10 +127,10 @@ post processing
 '''
     
 # Creates pd dataframe to then be used to make gantt chart
-titles = ['Observing', 'Processing', 'downlinking', 'idling', 'num observed', 'num processed', 'num downlinked']
+titles = ['Observing', 'Processing', 'downlinking', 'idling', 'num observed', 'num processed', 'num downlinked', 'memory used (kB)']
 data = []
 actionABS = []
-scheduleWrite = [[0  for a in range(7)] for s in all_T]
+scheduleWrite = [[0  for a in range(8)] for s in all_T]
 schedule = [[0  for s in all_T] for a in all_action]
 target_ilum_val = [[0 for s in all_T] for sat in all_sats]
 for s in all_T:
@@ -139,9 +139,13 @@ for s in all_T:
             actionABS.append(titles[a])
             scheduleWrite[s][a] = 1
             schedule[a][s] = 1
-        scheduleWrite[s][4] = solver.Value(numobsLog[s])
-        scheduleWrite[s][5] = solver.Value(numproLog[s])
-        scheduleWrite[s][6] = solver.Value(numdownLog[s])
+        for i in range(4):
+            multi =1
+            if i ==3:
+                multi = 0.1
+                
+            scheduleWrite[s][i+4] = multi*solver.Value(Log[i][s])
+            
     for sat in all_sats:
         if solver.Value(target_ilum[(sat,s)]) == 1:
             target_ilum_val[sat][s] = 1
