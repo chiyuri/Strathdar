@@ -41,10 +41,10 @@ def memoryGraph(memoryLog, time):
     plt.plot(time,memoryLog[3])
     plt.title("Storage use over time")
     plt.xlabel("time (s)")
-    plt.ylabel("memory used (0.1kB)")
+    plt.ylabel("memory used (MB)")
     plt.legend(["Observation Data set memory use","processed data set memory use","overall memory use"])
     ax = plt.gca()
-    ax.set_xticklabels([])
+    #ax.set_xticklabels([])
 
     plt.figure(3)
     plt.plot(time,memoryLog[1])
@@ -52,9 +52,9 @@ def memoryGraph(memoryLog, time):
     plt.title("storage used and downlniked over time ")
     plt.legend(["Processed","Downlinked"])
     plt.xlabel("time (s)")
-    plt.ylabel("memory used (0.1kB")
+    plt.ylabel("memory used (MB)")
     ax = plt.gca()
-    ax.set_xticklabels([])    
+    #ax.set_xticklabels([])    
     
 def ProObsGraph(ProObsLog,time):
     
@@ -67,7 +67,7 @@ def ProObsGraph(ProObsLog,time):
     plt.ylabel("number processed/observed datasets")
     plt.legend(["observations", "processed","Downlinked"])
     ax = plt.gca()
-    ax.set_xticklabels([])
+    #ax.set_xticklabels([])
     
     
 def downlinkingGraph(downlink, time):
@@ -112,8 +112,8 @@ def ObsValueGraph(ilum_value_list,target_ilum, action, time, all_T, all_sats):
     plt.ylabel("iluminator value (avg objects detected)")
     plt.legend(["Ilum value available","Target Ilum Value"])
     ax = plt.gca()
-    ax.set_xticklabels([])
-    ax.set_yticklabels([])
+    #ax.set_xticklabels([])
+    #ax.set_yticklabels([])
     
     
     

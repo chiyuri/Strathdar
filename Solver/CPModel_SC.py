@@ -130,6 +130,7 @@ def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_s
     
     return model, shifts, target_ilum, num_obs, num_pro, num_down, memory
         
+
+  
         
-        
-        
+    

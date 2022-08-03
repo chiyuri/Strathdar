@@ -10,7 +10,8 @@ Created on Thu Jul 28 14:18:06 2022
 import math
 import pandas as pd
 from ortools.sat.python import cp_model
-from Solver.CPModel_SC import CPModel_SC_data
+from Solver.CPModel_SC import CPModel_SC_data 
+from Solver.HintFunctions import CreateManHint, AddHint
 from utils import plotFunctions as pf
 from utils import postProcessing as post
 
@@ -35,8 +36,8 @@ FLOP_to_proc = 1000
 FLOPS_available = 100 # giga flops
 
 
-
-interval = 1000 # length of interval to be optimised
+hint = 0
+interval = 2800 # length of interval to be optimised
 start_shift=0
 
 obs_dataset_mem = int( 150e6/100 )# in 0.1 kB   
@@ -51,8 +52,9 @@ pro_dataset_mem = int(300 /100)  # in 0.1 kB
 down_rate_mem = 320  # in 0.1 kB per second
 down_rate = int(down_rate_mem/pro_dataset_mem)  # the number of processed dataset units the satellite can downlink per second
 
-
+num_pro_init=0
 memory_init = 0
+num_obs_init = 0
 memory_storage = int( 64e10) # 64GB total memory in 0.1kB
 num_obs_init = 0
 all_T = range(interval)
@@ -65,7 +67,13 @@ for t in all_T:
     for s in all_sats:
         ilum_value_list[t][s] = int(ilum_value_list[t][s]*10000)
 
-
+'''
+Creating Hint
+'''
+if hint == 1:
+    #add code to make hint
+    (hint_shifts, hint_target_ilum) = CreateManHint(any_ilum_list,ilum_value_list, gnd_stat_list, all_action,all_T, all_sats, obs_dataset_mem, obs_rate, pro_dataset_mem,
+                                                        pro_rate, down_rate, memory_init, memory_storage, num_obs_init,num_pro_init, dt)
 '''
 creating cp model
 '''
@@ -74,6 +82,10 @@ creating cp model
                     pro_rate, down_rate, memory_init, memory_storage, num_obs_init,dt, ilum_value_list)
 
 print("CP Model made")
+
+if hint ==1:
+    (model, shifts, target_ilum) = AddHint(model, shifts, target_ilum, hint_shifts, hint_target_ilum, all_T, all_action, all_sats)
+
 
 '''
 solving the CP model

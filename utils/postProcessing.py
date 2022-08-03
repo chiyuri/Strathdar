@@ -16,6 +16,8 @@ def memoryLogAssem(schedule, obs_mem_size, pro_mem_size, obs_rate, pro_rate, dow
     all_action = range(len(schedule))
     all_shifts = range(len(schedule[0]))
     
+    scalefactor= 10000 # used to modify the memory to be in MB
+    
     mem_log = [[0 for s in all_shifts] for a in all_action]
     num_log = [[0 for s in all_shifts] for a in all_action]
     num = [0 for a in all_action]
@@ -33,18 +35,18 @@ def memoryLogAssem(schedule, obs_mem_size, pro_mem_size, obs_rate, pro_rate, dow
         
         # for observation
         num_log[0][s] = num[0]
-        mem_log[0][s] = num_log[0][s] * obs_mem_size*dt
+        mem_log[0][s] = num_log[0][s] * obs_mem_size*dt/scalefactor
         
         # for processing
         num_log[1][s] = num[1]
-        mem_log[1][s] = num_log[1][s] * pro_mem_size*dt
+        mem_log[1][s] = num_log[1][s] * pro_mem_size*dt/scalefactor
         
         # for downlinking
         
         num_log[2][s] = num[2] 
-        mem_log[2][s] = num_log[2][s]*dt
+        mem_log[2][s] = num_log[2][s]*dt/scalefactor
         # overall memory use
-        mem_log[3][s] = mem_log[0][s]+mem_log[1][s]
+        mem_log[3][s] = mem_log[0][s]+mem_log[1][s]/scalefactor
     
     
     
