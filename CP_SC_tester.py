@@ -81,7 +81,7 @@ if hint == 1:
 creating cp model
 '''
 
-(model, shifts, target_ilum, num_obs, num_pro, num_down, memory) = CPModel_SC_data(any_ilum_list,gnd_stat_list, interval,start_shift, obs_dataset_mem, obs_rate, pro_dataset_mem,
+(model, shifts, target_ilum, num_obs, num_pro, num_down, memory, numobsLog, numproLog, numdownLog) = CPModel_SC_data(any_ilum_list,gnd_stat_list, interval,start_shift, obs_dataset_mem, obs_rate, pro_dataset_mem,
                     pro_rate, down_rate, memory_init, memory_storage, num_obs_init, num_pro_init, num_down_init,dt, ilum_value_list)
 
 print("CP Model made")
@@ -127,10 +127,10 @@ post processing
 '''
     
 # Creates pd dataframe to then be used to make gantt chart
-titles = ['Observing', 'Processing', 'downlinking', 'idling']
+titles = ['Observing', 'Processing', 'downlinking', 'idling', 'num observed', 'num processed', 'num downlinked']
 data = []
 actionABS = []
-scheduleWrite = [[0  for a in all_action] for s in all_T]
+scheduleWrite = [[0  for a in range(7)] for s in all_T]
 schedule = [[0  for s in all_T] for a in all_action]
 target_ilum_val = [[0 for s in all_T] for sat in all_sats]
 for s in all_T:
@@ -139,6 +139,9 @@ for s in all_T:
             actionABS.append(titles[a])
             scheduleWrite[s][a] = 1
             schedule[a][s] = 1
+        scheduleWrite[s][4] = solver.Value(numobsLog[s])
+        scheduleWrite[s][5] = solver.Value(numproLog[s])
+        scheduleWrite[s][6] = solver.Value(numdownLog[s])
     for sat in all_sats:
         if solver.Value(target_ilum[(sat,s)]) == 1:
             target_ilum_val[sat][s] = 1
