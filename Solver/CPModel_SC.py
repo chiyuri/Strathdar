@@ -112,8 +112,8 @@ def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_s
         
         num_pro += dt*(shifts[(1,s)] * pro_rate - shifts[(2,s)] * down_rate) #100 = one 1 seconde dataset
         
-        num_down += dt*(shifts[(2,s)] * down_rate) #100 = one 1 seconde dataset
-        
+        num_down += dt*(shifts[(2,s)] * down_rate) #100 = one 1 second dataset
+    
         #memory += (shifts[(0,s)] * obs_rate *obs_mem_size + shifts[(1,s)] *pro_rate* (pro_mem_size - obs_mem_size)   - shifts[(2,s)] *int( (down_rate)))
         #memory += *obs_mem_size + num_pro*pro_mem_size
         memory += dt*(shifts[(0,s)] * obs_rate *obs_mem_size  + shifts[(1,s)] *pro_rate* (pro_mem_size - obs_mem_size)- shifts[(2,s)] *down_rate)
@@ -126,7 +126,7 @@ def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_s
         
     
     model.Maximize(sum(400*shifts[(2,s)] + sum( target_ilum[(sat,s)]*ilum_value_list[s][sat] for sat in all_sats) for s in all_mod_shifts))
-    #model.Maximize 
+  
     
     return model, shifts, target_ilum, num_obs, num_pro, num_down, memory
         

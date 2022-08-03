@@ -36,7 +36,7 @@ FLOP_to_proc = 1000
 FLOPS_available = 100 # giga flops
 
 
-hint = 1
+hint = 0
 interval = 1000 # length of interval to be optimised
 start_shift=0
 
