@@ -93,12 +93,14 @@ def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_s
         # requires a ground station to be in view for downlinking to occur
         model.Add(Gnd_stat_list[s] > 0).OnlyEnforceIf(shifts[(2,s)])
         
+        #constraint to ensure that a illuminator is targeted when observing 
         model.Add(sum(target_ilum[(sat,s)] for sat in all_sats) > 0 ).OnlyEnforceIf(shifts[(0,s)])
+        #constraint to ensure no illuminator is targetes when not observing
         model.Add(sum(target_ilum[(sat,s)] for sat in all_sats) == 0 ).OnlyEnforceIf(shifts[(0,s)].Not())
         
     if b == 0 :
         memory = int(0) 
-        
+
         num_obs = int( 0)
         num_pro = int(0)
         num_down = int(0)
@@ -107,6 +109,8 @@ def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_s
         num_obs = num_obs_init
         num_pro = num_pro_init
         num_down = num_down_init
+        
+        
     for s in all_mod_shifts:
         
         num_obs += dt*(shifts[(0,s)] * obs_rate - shifts[(1,s)]  * pro_rate) #100 = one 1 seconde dataset
@@ -119,14 +123,14 @@ def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_s
         #memory += *obs_mem_size + num_pro*pro_mem_size
         memory += dt*(shifts[(0,s)] * obs_rate *obs_mem_size  + shifts[(1,s)] *pro_rate* (pro_mem_size - obs_mem_size)- shifts[(2,s)] *down_rate)
         # require data sets to be available for processing for processing to occur
-        model.Add(num_obs >= pro_rate).OnlyEnforceIf(shifts[(1,s)])
+        model.Add(num_obs >= pro_rate*dt).OnlyEnforceIf(shifts[(1,s)])
         # requires processed data sets to available for downlinking to occur
-        model.Add(num_pro*pro_mem_size >= down_rate).OnlyEnforceIf(shifts[(2,s)])
+        model.Add(num_pro*pro_mem_size >= down_rate*dt).OnlyEnforceIf(shifts[(2,s)])
         #requires used memory to remain below memory available
         model.Add(memory < memory_storage)
         
     
-    model.Maximize(sum(400*shifts[(2,s)] + sum( target_ilum[(sat,s)]*ilum_value_list[s][sat] for sat in all_sats) for s in all_mod_shifts))
+    model.Maximize(sum(1*shifts[(2,s)] +  sum( target_ilum[(sat,s)]*ilum_value_list[s][sat] for sat in all_sats) for s in all_mod_shifts))
   
     
     return model, shifts, target_ilum, num_obs, num_pro, num_down, memory

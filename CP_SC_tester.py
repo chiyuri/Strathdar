@@ -14,7 +14,8 @@ from Solver.CPModel_SC import CPModel_SC_data
 from Solver.HintFunctions import CreateManHint, AddHint
 from utils import plotFunctions as pf
 from utils import postProcessing as post
-
+from utils import readwrite
+  
 #read in if a illuminator is in view 
 data = pd.read_csv("Data/60s, 5d, polar/Illuminator view data log.csv")
 any_ilum_list = data.values.tolist()
@@ -37,7 +38,7 @@ FLOPS_available = 100 # giga flops
 
 
 hint = 0
-interval = 7000 # length of interval to be optimised
+interval = 300 # length of interval to be optimised
 start_shift=0
 
 obs_dataset_mem = int( 150e6/100 )# in 0.1 kB   
@@ -129,12 +130,14 @@ post processing
 titles = ['Observing', 'Processing', 'downlinking', 'idling']
 data = []
 actionABS = []
-schedule = [[0 for s in all_T] for a in all_action]
+scheduleWrite = [[0  for a in all_action] for s in all_T]
+schedule = [[0  for s in all_T] for a in all_action]
 target_ilum_val = [[0 for s in all_T] for sat in all_sats]
 for s in all_T:
     for a in all_action:
         if solver.Value(shifts[(a,s)]) == 1:
             actionABS.append(titles[a])
+            scheduleWrite[s][a] = 1
             schedule[a][s] = 1
     for sat in all_sats:
         if solver.Value(target_ilum[(sat,s)]) == 1:
@@ -142,7 +145,12 @@ for s in all_T:
     
     tempDict = dict(start = s*dt, duration = dt, end = (s+1)*dt, action = actionABS[s])
     data.append(tempDict)
+    
 df = pd.DataFrame(data)
+
+
+readwrite.xlsxOut(scheduleWrite,titles, "scheduleraw.xlsx", "./results/")
+
 
 pf.ganttChart(df,titles)
 

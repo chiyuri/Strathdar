@@ -11,7 +11,7 @@ import math
 import pandas as pd
 from ortools.sat.python import cp_model
 from CPModel_SC import CPModel_SC_data
-
+from Strathdar.utils.plotFunctions import ganttChart
 data = pd.read_csv("../Data/30s, 1d, polar/Illuminator view data log.csv")
 any_ilum_list = data.values.tolist()
 

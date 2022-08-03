@@ -5,12 +5,12 @@ Created on Wed Jul 27 10:18:21 2022
 @author: iainh
 """
 
-import plotly.express as px
+#import plotly.express as px
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-import plotly.io as pio
-pio.renderers.default='svg'
+#import plotly.io as pio
+#pio.renderers.default='svg'
 
 
 
