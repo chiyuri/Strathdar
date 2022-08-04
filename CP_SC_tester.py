@@ -38,7 +38,8 @@ FLOPS_available = 100 # giga flops
 
 
 hint = 0
-interval = 300 # length of interval to be optimised
+target_print = 1
+interval = 3000 # length of interval to be optimised
 start_shift=0
 
 obs_dataset_mem = int( 150e3/100 )# in 0.1 kB   
@@ -58,7 +59,7 @@ memory_init = 0
 num_obs_init = 0
 num_pro_init=0
 num_down_init = 0
-memory_storage = int( 64e7) # 64GB total memory in 0.1kB
+memory_storage = int( 126000000/4) # 64GB total memory in 0.1kB
 num_obs_init = 0
 all_T = range(interval)
 all_action = range(4)
@@ -67,8 +68,8 @@ dt = 60
 time = [dt*t for t in all_T]
 
 for t in all_T:
-    for s in all_sats:
-        ilum_value_list[t][s] = int(ilum_value_list[t][s]*10000)
+    for sat in all_sats:
+        ilum_value_list[t][sat] = math.floor(ilum_value_list[t][sat]*10000)
 
 '''
 Creating Hint
@@ -96,7 +97,7 @@ solving the CP model
 
 solver = cp_model.CpSolver()  
 
-solver.parameters.max_time_in_seconds =2400
+solver.parameters.max_time_in_seconds =600
 solver.parameters.log_search_progress = True
 solver.parameters.num_search_workers = 8
 
@@ -123,16 +124,18 @@ else:
     print('Solution: no feasible solution found')
 
 
+if target_print ==1:
+    post.target_printer(solver,shifts, target_ilum, ilum_value_list, all_T,all_action,all_sats)
 
 '''
 post processing
 '''
     
 # Creates pd dataframe to then be used to make gantt chart
-titles = ['Observing', 'Processing', 'downlinking', 'idling', 'num observed', 'num processed', 'num downlinked', 'memory used (kB)']
+titles = ['Observing', 'Processing', 'downlinking', 'idling', 'num observed', 'num processed', 'num downlinked', 'memory used (kB)', 'Any Satellite targeted']
 data = []
 actionABS = []
-scheduleWrite = [[0  for a in range(8)] for s in all_T]
+scheduleWrite = [[0  for a in range(9)] for s in all_T]
 schedule = [[0  for s in all_T] for a in all_action]
 target_ilum_val = [[0 for s in all_T] for sat in all_sats]
 for s in all_T:
@@ -152,6 +155,9 @@ for s in all_T:
         if solver.Value(target_ilum[(sat,s)]) == 1:
             target_ilum_val[sat][s] = 1
     
+    if sum(target_ilum_val[sat][s] for sat in all_sats) > 0:
+        scheduleWrite[s][8] = 1
+        
     tempDict = dict(start = s*dt, duration = dt, end = (s+1)*dt, action = actionABS[s])
     data.append(tempDict)
     

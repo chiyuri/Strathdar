@@ -52,3 +52,21 @@ def memoryLogAssem(schedule, obs_mem_size, pro_mem_size, obs_rate, pro_rate, dow
     
     
     return mem_log, num_log
+
+def target_printer(solver, shifts, target_ilum, ilum_value, all_shifts,all_action,all_sat):
+    
+    for s in all_shifts:
+        text = "Shift %i satellite targets: \n" % (s)
+        
+        n=0
+        for sat in all_sat:
+            
+            if solver.Value(target_ilum[(sat,s)]) != 0:
+                n = 1
+                text = text + "illuminator %i for value: %i  \n" % (sat, ilum_value[s][sat]) 
+        if n == 1:        
+            print(text)
+    
+    
+    
+    return
