@@ -47,10 +47,9 @@ memory: the memory in use at the end of the interval
 
 
 def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_size, obs_rate, pro_mem_size,
-                    pro_rate, down_rate,down_mem_size, memory_init, memory_storage, num_obs_init, num_pro_init, num_down_init,dt, ilum_value_list):
+                    pro_rate, down_rate,down_mem_size, memory_init, memory_storage, num_obs_init, num_pro_init, num_down_init,dt, ilum_value_list, switchtime):
     
     model = cp_model.CpModel()
-    
     num_actions = 4
     num_sats = 66
     all_action = range(num_actions)
@@ -97,7 +96,18 @@ def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_s
         model.Add(sum(target_ilum[(sat,s)] for sat in all_sats) > 0 ).OnlyEnforceIf(shifts[(0,s)])
         #constraint to ensure no illuminator is targetes when not observing
         model.Add(sum(target_ilum[(sat,s)] for sat in all_sats) == 0 ).OnlyEnforceIf(shifts[(0,s)].Not())
-        
+        if s > switchtime-1 and s < interval-switchtime-1:
+            for sat in all_sats:
+                model.Add(sum(target_ilum[(sat_mod,s_mod)] for sat_mod in range(0,sat-1) for s_mod in range(s-switchtime,s+switchtime ) )  == 0).OnlyEnforceIf(target_ilum[(sat,s)])
+                model.Add(sum(target_ilum[(sat_mod,s_mod)] for sat_mod in range(sat+1,65) for s_mod in range(s-switchtime,s+switchtime ) )  == 0).OnlyEnforceIf(target_ilum[(sat,s)])
+        elif s <= switchtime-1:
+            for sat in all_sats:
+                model.Add(sum(target_ilum[(sat_mod,s_mod)] for sat_mod in range(0,sat-1) for s_mod in range(0,s+switchtime ) )  == 0).OnlyEnforceIf(target_ilum[(sat,s)])
+                model.Add(sum(target_ilum[(sat_mod,s_mod)] for sat_mod in range(sat+1,65) for s_mod in range(0,s+switchtime ) )  == 0).OnlyEnforceIf(target_ilum[(sat,s)])
+        elif s >= interval-switchtime-1:
+            for sat in all_sats:
+                model.Add(sum(target_ilum[(sat_mod,s_mod)] for sat_mod in range(0,sat-1) for s_mod in range(s-switchtime, interval-1 ) )  == 0).OnlyEnforceIf(target_ilum[(sat,s)])
+                model.Add(sum(target_ilum[(sat_mod,s_mod)] for sat_mod in range(sat+1,65) for s_mod in range(s-switchtime, interval-1 ) )  == 0).OnlyEnforceIf(target_ilum[(sat,s)])
     if b == 0 :
         memory = int(0) 
 
@@ -132,7 +142,7 @@ def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_s
         model.Add(memory < memory_storage)
         
     
-    model.Maximize(sum( target_ilum[(sat,s)] * ilum_value_list[s][sat] for sat in all_sats for s in all_mod_shifts))
+    model.Maximize(sum(shifts[(2,s)] + target_ilum[(sat,s)] * ilum_value_list[s][sat] for sat in all_sats for s in all_mod_shifts))
                                                                 #^^sum( target_ilum[(sat,s)]for sat in all_satsilum_value_list[s][sat]
     
     return model, shifts, target_ilum, num_obs, num_pro, num_down, memory, Log

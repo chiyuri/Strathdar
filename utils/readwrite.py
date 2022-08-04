@@ -16,8 +16,7 @@ def     xlsxOut(data,titles,name,destination):
     df = pd.DataFrame(data,index = ind, columns = titles)
     
     address = destination + name + ".xlsx"
-    df.to_excel(address,sheet_name = "sheet1")
+    df.to_excel(address,sheet_name = "she7et1")
     
     print("succesfully wrote out")
-
 

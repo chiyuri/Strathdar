@@ -39,7 +39,7 @@ FLOPS_available = 100 # giga flops
 
 hint = 0
 target_print = 1
-interval = 3000 # length of interval to be optimised
+interval = 1000 # length of interval to be optimised
 start_shift=0
 
 obs_dataset_mem = int( 150e3/100 )# in 0.1 kB   
@@ -59,12 +59,14 @@ memory_init = 0
 num_obs_init = 0
 num_pro_init=0
 num_down_init = 0
-memory_storage = int( 126000000/4) # 64GB total memory in 0.1kB
+memory_storage = int( 64e7) # 64GB total memory in 0.1kB
 num_obs_init = 0
 all_T = range(interval)
 all_action = range(4)
 all_sats = range(66)
 dt = 60
+switchtime = 1
+
 time = [dt*t for t in all_T]
 
 for t in all_T:
@@ -83,7 +85,7 @@ creating cp model
 '''
 
 (model, shifts, target_ilum, num_obs, num_pro, num_down, memory, Log) = CPModel_SC_data(any_ilum_list,gnd_stat_list, interval,start_shift, obs_dataset_mem, obs_rate, pro_dataset_mem,
-                    pro_rate, down_rate,down_dataset_mem, memory_init, memory_storage, num_obs_init, num_pro_init, num_down_init,dt, ilum_value_list)
+                    pro_rate, down_rate,down_dataset_mem, memory_init, memory_storage, num_obs_init, num_pro_init, num_down_init,dt, ilum_value_list,switchtime)
 
 print("CP Model made")
 
@@ -138,6 +140,7 @@ actionABS = []
 scheduleWrite = [[0  for a in range(9)] for s in all_T]
 schedule = [[0  for s in all_T] for a in all_action]
 target_ilum_val = [[0 for s in all_T] for sat in all_sats]
+target_ilum_val_inv = [[0  for sat in all_sats] for s in all_T] 
 for s in all_T:
     for a in all_action:
         if solver.Value(shifts[(a,s)]) == 1:
@@ -154,7 +157,7 @@ for s in all_T:
     for sat in all_sats:
         if solver.Value(target_ilum[(sat,s)]) == 1:
             target_ilum_val[sat][s] = 1
-    
+            target_ilum_val_inv[s][sat] = 1
     if sum(target_ilum_val[sat][s] for sat in all_sats) > 0:
         scheduleWrite[s][8] = 1
         
@@ -166,6 +169,11 @@ df = pd.DataFrame(data)
 
 readwrite.xlsxOut(scheduleWrite,titles, "scheduleraw.xlsx", "./results/")
 
+titles = []
+for sat in all_sats:
+    temp = "Sat_%i" % (sat)
+    titles.append(temp)
+readwrite.xlsxOut(target_ilum_val_inv, titles, "illuminator targeted.xlsx", "./results/")
 
 pf.ganttChart(df,titles)
 
