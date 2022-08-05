@@ -3,6 +3,17 @@
 Created on Thu Aug  4 15:17:05 2022
 
 @author: iainh
+
+
+
+Script which runs all intervals for a Dataset to optimise it
+Will simply optimise each interval using its outputs to feed into the 
+next interval
+
+
+
+
+
 """
 
 
@@ -18,9 +29,8 @@ from utils import readwrite
 ideintification of intervals and initial values
 '''
 
-full_horizon = 5000
-interval_size = 1000
-dt= 60
+full_horizon = 300
+interval_size = 300
 a = 0
 b = interval_size
 hint = 0
@@ -53,7 +63,7 @@ memory= 0
 num_obs = 0
 num_pro= 0
 num_down= 0
-num_obs= 0
+
 
 for interval in all_interval:
     
@@ -96,13 +106,50 @@ for interval in all_interval:
     run model
     '''
     
+    solver = cp_model.CpSolver()  
+
+    solver.parameters.max_time_in_seconds =600
+    solver.parameters.log_search_progress = True
+    solver.parameters.num_search_workers = 4
+    
+    status = solver.Solve(model)
+    
+    
+    if status == cp_model.OPTIMAL :
+        print('Solution: optimal found for interval %i to %i' % (a,b))
+        print(f'Objective value achieved = {solver.ObjectiveValue()} ')
+        print('\nStatistics')
+        print('  - conflicts      : %i' % solver.NumConflicts())
+        print('  - branches       : %i' % solver.NumBranches())
+        print('  - wall time      : %f s' % solver.WallTime())
+    
+    
+    elif status == cp_model.FEASIBLE:
+        print('Solution: feasible found for interval %i to %i' % (a,b))
+        print(f'Objective value achieved = {solver.ObjectiveValue()} ')
+        print('\nStatistics')
+        print('  - conflicts      : %i' % solver.NumConflicts())
+        print('  - branches       : %i' % solver.NumBranches())
+        print('  - wall time      : %f s' % solver.WallTime())
+  
+    
+    else:
+        print('Solution: no feasible solution found for %i to %i' % (a,b))
     
     
     
+    memory= solver.Value(memory)
+    num_obs = solver.Value(num_obs)
+    num_pro= solver.Value(num_pro)
+    num_down= solver.Value(num_down)
+   
     
     '''
     write values out to files
     '''
+    
+    
+    
     
     
  

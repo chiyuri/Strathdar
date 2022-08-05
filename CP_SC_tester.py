@@ -39,7 +39,7 @@ FLOPS_available = 100 # giga flops
 
 hint = 0
 target_print = 1
-interval = 1000 # length of interval to be optimised
+interval = 300 # length of interval to be optimised
 start_shift=0
 
 obs_dataset_mem = int( 150e3/100 )# in 0.1 kB   
@@ -101,7 +101,7 @@ solver = cp_model.CpSolver()
 
 solver.parameters.max_time_in_seconds =600
 solver.parameters.log_search_progress = True
-solver.parameters.num_search_workers = 8
+solver.parameters.num_search_workers = 4
 
 status = solver.Solve(model)
 if status == cp_model.OPTIMAL :

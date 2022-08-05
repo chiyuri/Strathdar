@@ -12,6 +12,8 @@ import openpyxl
 
 def     xlsxOut(data,titles,name,destination):
     
+    
+    
     ind = [i for i in range(0,len(data))]
     df = pd.DataFrame(data,index = ind, columns = titles)
     
@@ -20,3 +22,18 @@ def     xlsxOut(data,titles,name,destination):
     
     print("succesfully wrote out")
 
+def xlsxAppend(data, titles, name, destination):
+    
+    
+    if fileExitsts == 1:
+        
+        
+        print("Succesfully appended document")
+    
+    else:
+        
+        
+        print("no document named " + name + "exists, new document made")
+    
+    
+    
