@@ -35,7 +35,7 @@ a = 0
 b = interval_size
 hint = 0
 switchtime =0
-
+dt = 60
 num_interval = math.ceil(full_horizon/interval_size)
 
 # used to define how long it takes to process each dataset
@@ -98,7 +98,7 @@ for interval in all_interval:
     '''
     
     
-    (model, shifts, target_ilum, num_obs, num_pro, num_down, memory, Log) = CPModel_SC_data(any_ilum_list,gnd_stat_list, interval,a, obs_dataset_mem, obs_rate, pro_dataset_mem,
+    (model, shifts, target_ilum, num_obs, num_pro, num_down, memory, Log) = CPModel_SC_data(any_ilum_list,gnd_stat_list, interval_size,a, obs_dataset_mem, obs_rate, pro_dataset_mem,
                     pro_rate, down_rate,down_dataset_mem, memory, memory_storage, num_obs, num_pro, num_down,dt, ilum_value_list,switchtime)
     print("CP Model made for interval %i to %i" % (a,b))
 
