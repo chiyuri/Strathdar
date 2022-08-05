@@ -29,10 +29,10 @@ from utils import readwrite
 ideintification of intervals and initial values
 '''
 
-full_horizon = 300
-interval_size = 300
-a = 0
-b = interval_size
+full_horizon = 7200
+interval_size = 1440
+b = 0
+c = interval_size
 hint = 0
 switchtime =0
 dt = 60
@@ -65,29 +65,43 @@ num_pro= 0
 num_down= 0
 
 
+#making the dataframe to output the schedule
+#schedtemp = [[] for a in range(9)]
+
+schedule_out_titles = ['Observing', 'Processing', 'downlinking', 'idling', 'num observed', 'num processed', 'num downlinked', 'memory used (kB)', 'Satellite targeted']
+
+
+
+
+
+
+
 for interval in all_interval:
     
+    interval_size_CP_model = c-b
+    interval_shifts=range(b,c)
+    all_mod_shifts = range(c-b)
     
-    interval_shifts=range(a,b)
-    all_mod_shifts = range(b-a)
     '''
     File read in 
     '''
+    
     #read in if a illuminator is in view 
     data = pd.read_csv("Data/60s, 5d, polar/Illuminator view data log.csv")
     temp = data.values.tolist()
-    any_ilum_list = temp[a:b] 
+    any_ilum_list = temp[b:c] 
     #read in the downlink data times
     data = pd.read_csv("Data/60s, 5d, polar/Communications Data log.csv")
     temp= data.values.tolist() 
-    datals = temp[a:b]
+    datals = temp[b:c]
     
     # chages downlink from list of lists to 1D list
     gnd_stat_list = [datals[i][0] for i in range(0, len(datals))]
+    
     #  reads in which illuminators are visible
     data = pd.read_csv("Data/60s, 5d, polar/Avg objects Detection log.csv")
     temp = data.values.tolist()
-    ilum_value_list = temp[a:b]
+    ilum_value_list = temp[b:c]
     
     for s in all_mod_shifts:
         for sat in all_sats:
@@ -98,9 +112,9 @@ for interval in all_interval:
     '''
     
     
-    (model, shifts, target_ilum, num_obs, num_pro, num_down, memory, Log) = CPModel_SC_data(any_ilum_list,gnd_stat_list, interval_size,a, obs_dataset_mem, obs_rate, pro_dataset_mem,
+    (model, shifts, target_ilum, num_obs, num_pro, num_down, memory, Log) = CPModel_SC_data(any_ilum_list,gnd_stat_list, interval_size_CP_model,b, obs_dataset_mem, obs_rate, pro_dataset_mem,
                     pro_rate, down_rate,down_dataset_mem, memory, memory_storage, num_obs, num_pro, num_down,dt, ilum_value_list,switchtime)
-    print("CP Model made for interval %i to %i" % (a,b))
+    print("CP Model made for interval %i to %i" % (b,c))
 
     '''
     run model
@@ -116,7 +130,7 @@ for interval in all_interval:
     
     
     if status == cp_model.OPTIMAL :
-        print('Solution: optimal found for interval %i to %i' % (a,b))
+        print('Solution: optimal found for interval %i to %i' % (b,c))
         print(f'Objective value achieved = {solver.ObjectiveValue()} ')
         print('\nStatistics')
         print('  - conflicts      : %i' % solver.NumConflicts())
@@ -125,7 +139,7 @@ for interval in all_interval:
     
     
     elif status == cp_model.FEASIBLE:
-        print('Solution: feasible found for interval %i to %i' % (a,b))
+        print('Solution: feasible found for interval %i to %i' % (b,c))
         print(f'Objective value achieved = {solver.ObjectiveValue()} ')
         print('\nStatistics')
         print('  - conflicts      : %i' % solver.NumConflicts())
@@ -134,7 +148,7 @@ for interval in all_interval:
   
     
     else:
-        print('Solution: no feasible solution found for %i to %i' % (a,b))
+        print('Solution: no feasible solution found for %i to %i' % (b,c))
     
     
     
@@ -142,18 +156,43 @@ for interval in all_interval:
     num_obs = solver.Value(num_obs)
     num_pro= solver.Value(num_pro)
     num_down= solver.Value(num_down)
-   
+    
     
     '''
     write values out to files
     '''
+    scheduleWrite = [[0  for a in range(9)] for s in all_mod_shifts]
+    target_ilum_val_inv = [[0  for sat in all_sats] for s in all_mod_shifts] 
+    for s in all_mod_shifts:
+        for a in all_action:
+            if solver.Value(shifts[(a,s)]) == 1:
+              
+                scheduleWrite[s][a] = 1
+            for i in range(4):
+                multi =1
+                if i ==3:
+                    multi = 0.1
+                
+                scheduleWrite[s][i+4] = multi*solver.Value(Log[i][s])
+            
+    for sat in all_sats:
+        if solver.Value(target_ilum[(sat,s)]) == 1:
+            scheduleWrite[s][8] = sat
+            target_ilum_val_inv[s][sat] = 1
+    ind = [i for i in range(b,c)]
     
+    if b == 0:
+        
+        scheduleout= pd.DataFrame(scheduleWrite,index = ind, columns=schedule_out_titles)
+        
+    else:
+        dftemp = pd.DataFrame(scheduleWrite,index = ind, columns=schedule_out_titles)
+        scheduleout= scheduleout.append(dftemp)
+        
     
-    
-    
-    
- 
-    a += interval_size
-    b = a+interval_size-1
-  
+    name = "scheduleraw_up_to_shift %i" % (c)    
+    readwrite.df_to_xlsxOut(scheduleout,schedule_out_titles, name, "./results/many_interval_test/")
+    b += interval_size
+    c = b+interval_size
+    print("\n")
         

@@ -22,6 +22,8 @@ def     xlsxOut(data,titles,name,destination):
     
     print("succesfully wrote out")
 
+
+#unfinished
 def xlsxAppend(data, titles, name, destination):
     
     
@@ -36,4 +38,10 @@ def xlsxAppend(data, titles, name, destination):
         print("no document named " + name + "exists, new document made")
     
     
+
+def df_to_xlsxOut(data,titles,name,destination):
     
+    address = destination + name + ".xlsx"
+    data.to_excel(address,sheet_name = "she7et1")
+    
+    print("succesfully wrote out")
