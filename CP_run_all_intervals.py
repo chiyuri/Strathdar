@@ -34,7 +34,7 @@ interval_size = 1440
 b = 0
 c = interval_size
 hint = 0
-switchtime =0
+switchtime =1
 dt = 60
 num_interval = math.ceil(full_horizon/interval_size)
 
@@ -122,7 +122,7 @@ for interval in all_interval:
     
     solver = cp_model.CpSolver()  
 
-    solver.parameters.max_time_in_seconds =600
+    solver.parameters.max_time_in_seconds =300
     solver.parameters.log_search_progress = True
     solver.parameters.num_search_workers = 4
     
@@ -145,6 +145,7 @@ for interval in all_interval:
         print('  - conflicts      : %i' % solver.NumConflicts())
         print('  - branches       : %i' % solver.NumBranches())
         print('  - wall time      : %f s' % solver.WallTime())
+        
   
     
     else:
@@ -175,10 +176,10 @@ for interval in all_interval:
                 
                 scheduleWrite[s][i+4] = multi*solver.Value(Log[i][s])
             
-    for sat in all_sats:
-        if solver.Value(target_ilum[(sat,s)]) == 1:
-            scheduleWrite[s][8] = sat
-            target_ilum_val_inv[s][sat] = 1
+        for sat in all_sats:
+            if solver.Value(target_ilum[(sat,s)]) == 1:
+                scheduleWrite[s][8] = sat
+                target_ilum_val_inv[s][sat] = 1
     ind = [i for i in range(b,c)]
     
     if b == 0:
@@ -190,7 +191,7 @@ for interval in all_interval:
         scheduleout= scheduleout.append(dftemp)
         
     
-    name = "scheduleraw_up_to_shift %i" % (c)    
+    name = "Alt_scheduleraw_up_to_shift %i" % (c)    
     readwrite.df_to_xlsxOut(scheduleout,schedule_out_titles, name, "./results/many_interval_test/")
     b += interval_size
     c = b+interval_size
