@@ -117,8 +117,17 @@ def ObsValueGraph(ilum_value_list,target_ilum, action, time, all_T, all_sats):
     
     
     
+def ProfitGraph(profitability, time):
+     
+    # plots the schedules profitability over time
     
-    
+    plt.figure(5)
+    plt.plot(time, profitability)
+    plt.title("schedule profit over time")
+    plt.xlabel("time (s)")
+    plt.ylabel("profit")
+    ax = plt.gca()
+
     
     
     

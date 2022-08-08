@@ -29,7 +29,7 @@ from utils import readwrite
 ideintification of intervals and initial values
 '''
 
-full_horizon = 7200
+full_horizon = 7199
 interval_size = 1440
 b = 0
 c = interval_size
@@ -77,6 +77,10 @@ schedule_out_titles = ['Observing', 'Processing', 'downlinking', 'idling', 'num 
 
 
 for interval in all_interval:
+    
+    
+    
+    
     
     interval_size_CP_model = c-b
     interval_shifts=range(b,c)
@@ -195,5 +199,11 @@ for interval in all_interval:
     readwrite.df_to_xlsxOut(scheduleout,schedule_out_titles, name, "./results/many_interval_test/")
     b += interval_size
     c = b+interval_size
+    
+    if c > full_horizon:
+        c = full_horizon
+    
+    
     print("\n")
         
+    
