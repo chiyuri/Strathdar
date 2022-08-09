@@ -21,7 +21,7 @@ from utils import postProcessing as post
 from utils import readwrite
 
 
-optimised_data = "results/many_interval_test/scheduleraw_up_to_shift 5760.xlsx"
+optimised_data = "results/many_interval_test/Alt_scheduleraw_up_to_shift 7199.xlsx"
 dt = 60
 
 
@@ -80,7 +80,7 @@ for s in all_shifts:
             profitability += profit_action[a]
    
     for sat in all_sat:
-        if data[s][9] == sat:
+        if data[s][9] == sat and data[s][1] == 1:
             profitability += math.floor(ilum_value_list[s][sat]*10000)
     
     profitability_Log[s]= profitability
