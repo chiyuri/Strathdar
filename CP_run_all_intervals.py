@@ -17,7 +17,8 @@ next interval
 """
 
 
-
+import os
+import datetime
 import math
 import pandas as pd
 from ortools.sat.python import cp_model
@@ -29,8 +30,8 @@ from utils import readwrite
 ideintification of intervals and initial values
 '''
 
-full_horizon = 7199
-interval_size = 1440
+full_horizon = 200
+interval_size = 100
 b = 0
 c = interval_size
 hint = 0
@@ -63,16 +64,22 @@ memory= 0
 num_obs = 0
 num_pro= 0
 num_down= 0
-
+ 
 
 #making the dataframe to output the schedule
 #schedtemp = [[] for a in range(9)]
 
 schedule_out_titles = ['Observing', 'Processing', 'downlinking', 'idling', 'num observed', 'num processed', 'num downlinked', 'memory used (kB)', 'Satellite targeted']
-
-
-
-
+current_time = datetime.datetime.now()
+month =  str(current_time.month)
+day = str(current_time.day)
+hour = str(current_time.hour)
+minute = str(current_time.minute)
+time_now = "_M" + month + "_D" +day +"_H" + hour + "_min" + minute
+path = "./results/60s_5d_Polar_iainDesktop"
+path = path +time_now
+os.mkdir(path)
+path = path+ "/"
 
 
 
@@ -196,7 +203,7 @@ for interval in all_interval:
         
     
     name = "Alt_scheduleraw_up_to_shift %i" % (c)    
-    readwrite.df_to_xlsxOut(scheduleout,schedule_out_titles, name, "./results/many_interval_test/")
+    readwrite.df_to_xlsxOut(scheduleout,schedule_out_titles, name, path)
     b += interval_size
     c = b+interval_size
     
