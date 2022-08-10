@@ -30,13 +30,13 @@ from utils import readwrite
 ideintification of intervals and initial values
 '''
 
-full_horizon = 200
-interval_size = 100
+full_horizon = 86400
+interval_size = 3000
 b = 0
 c = interval_size
 hint = 0
-switchtime =1
-dt = 60
+switchtime =10
+dt = 1
 num_interval = math.ceil(full_horizon/interval_size)
 
 # used to define how long it takes to process each dataset
@@ -76,7 +76,7 @@ day = str(current_time.day)
 hour = str(current_time.hour)
 minute = str(current_time.minute)
 time_now = "_M" + month + "_D" +day +"_H" + hour + "_min" + minute
-path = "./results/60s_5d_Polar_iainDesktop"
+path = "./results/1s_5d_Polar_iainLaptop"
 path = path +time_now
 os.mkdir(path)
 path = path+ "/"
@@ -98,11 +98,11 @@ for interval in all_interval:
     '''
     
     #read in if a illuminator is in view 
-    data = pd.read_csv("Data/60s, 5d, polar/Illuminator view data log.csv")
+    data = pd.read_csv("Data/1s_5d_polar/Illuminator view data log.csv")
     temp = data.values.tolist()
     any_ilum_list = temp[b:c] 
     #read in the downlink data times
-    data = pd.read_csv("Data/60s, 5d, polar/Communications Data log.csv")
+    data = pd.read_csv("Data/1s_5d_polar/Communications Data log.csv")
     temp= data.values.tolist() 
     datals = temp[b:c]
     
@@ -110,7 +110,7 @@ for interval in all_interval:
     gnd_stat_list = [datals[i][0] for i in range(0, len(datals))]
     
     #  reads in which illuminators are visible
-    data = pd.read_csv("Data/60s, 5d, polar/Avg objects Detection log.csv")
+    data = pd.read_csv("Data/1s_5d_polar/Avg objects Detection log.csv")
     temp = data.values.tolist()
     ilum_value_list = temp[b:c]
     
@@ -133,9 +133,9 @@ for interval in all_interval:
     
     solver = cp_model.CpSolver()  
 
-    solver.parameters.max_time_in_seconds =300
+    solver.parameters.max_time_in_seconds =500
     solver.parameters.log_search_progress = True
-    solver.parameters.num_search_workers = 4
+    solver.parameters.num_search_workers = 8
     
     status = solver.Solve(model)
     
@@ -161,7 +161,10 @@ for interval in all_interval:
     
     else:
         print('Solution: no feasible solution found for %i to %i' % (b,c))
-    
+        print('\nStatistics')
+        print('  - conflicts      : %i' % solver.NumConflicts())
+        print('  - branches       : %i' % solver.NumBranches())
+        print('  - wall time      : %f s' % solver.WallTime())
     
     
     memory= solver.Value(memory)
