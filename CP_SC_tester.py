@@ -38,7 +38,10 @@ FLOPS_available = 100 # giga flops
 
 
 hint = 0
-target_print = 1
+switching_constraint=1
+switchtime = 1
+
+target_print = 0
 interval = 300 # length of interval to be optimised
 start_shift=0
 
@@ -65,7 +68,6 @@ all_T = range(interval)
 all_action = range(4)
 all_sats = range(66)
 dt = 60
-switchtime = 1
 
 time = [dt*t for t in all_T]
 
@@ -85,7 +87,7 @@ creating cp model
 '''
 
 (model, shifts, target_ilum, num_obs, num_pro, num_down, memory, Log) = CPModel_SC_data(any_ilum_list,gnd_stat_list, interval,start_shift, obs_dataset_mem, obs_rate, pro_dataset_mem,
-                    pro_rate, down_rate,down_dataset_mem, memory_init, memory_storage, num_obs_init, num_pro_init, num_down_init,dt, ilum_value_list,switchtime)
+                    pro_rate, down_rate,down_dataset_mem, memory_init, memory_storage, num_obs_init, num_pro_init, num_down_init,dt, ilum_value_list,switchtime,switching_constraint)
 
 print("CP Model made")
 

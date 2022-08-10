@@ -30,12 +30,14 @@ from utils import readwrite
 ideintification of intervals and initial values
 '''
 
-full_horizon = 86400
-interval_size = 3000
+full_horizon = 2500
+interval_size = 5000
 b = 0
 c = interval_size
-hint = 0
-switchtime =10
+hint = 1
+switchtime =4
+affix = "pol/1s_5d/G40/"
+switching_constraint = 1
 dt = 1
 num_interval = math.ceil(full_horizon/interval_size)
 
@@ -66,6 +68,7 @@ num_pro= 0
 num_down= 0
  
 
+
 #making the dataframe to output the schedule
 #schedtemp = [[] for a in range(9)]
 
@@ -76,7 +79,7 @@ day = str(current_time.day)
 hour = str(current_time.hour)
 minute = str(current_time.minute)
 time_now = "_M" + month + "_D" +day +"_H" + hour + "_min" + minute
-path = "./results/1s_5d_Polar_iainLaptop"
+path = "./results/" + affix + "iainLaptop"
 path = path +time_now
 os.mkdir(path)
 path = path+ "/"
@@ -98,11 +101,11 @@ for interval in all_interval:
     '''
     
     #read in if a illuminator is in view 
-    data = pd.read_csv("Data/1s_5d_polar/Illuminator view data log.csv")
+    data = pd.read_csv("Data/" + affix +"/Illuminator view data log.csv")
     temp = data.values.tolist()
     any_ilum_list = temp[b:c] 
     #read in the downlink data times
-    data = pd.read_csv("Data/1s_5d_polar/Communications Data log.csv")
+    data = pd.read_csv("Data/" + affix +"/Communications Data log.csv")
     temp= data.values.tolist() 
     datals = temp[b:c]
     
@@ -110,7 +113,7 @@ for interval in all_interval:
     gnd_stat_list = [datals[i][0] for i in range(0, len(datals))]
     
     #  reads in which illuminators are visible
-    data = pd.read_csv("Data/1s_5d_polar/Avg objects Detection log.csv")
+    data = pd.read_csv("Data/" + affix +"/Avg objects Detection log.csv")
     temp = data.values.tolist()
     ilum_value_list = temp[b:c]
     
@@ -118,22 +121,33 @@ for interval in all_interval:
         for sat in all_sats:
             ilum_value_list[s][sat] = math.floor(ilum_value_list[s][sat]*10000)
     
+    
+    
+    # make the hint for the model
+    if hint == 1:
+        (hint_shifts, hint_target_ilum) = CreateManHint(any_ilum_list,ilum_value_list, gnd_stat_list, all_action,all_mod_shifts, all_sats, obs_dataset_mem, obs_rate, pro_dataset_mem,
+                    pro_rate, down_rate, memory, memory_storage, num_obs,num_pro, dt, switching_constraint)
+        
+    
     '''
     create model
     '''
     
     
     (model, shifts, target_ilum, num_obs, num_pro, num_down, memory, Log) = CPModel_SC_data(any_ilum_list,gnd_stat_list, interval_size_CP_model,b, obs_dataset_mem, obs_rate, pro_dataset_mem,
-                    pro_rate, down_rate,down_dataset_mem, memory, memory_storage, num_obs, num_pro, num_down,dt, ilum_value_list,switchtime)
+                    pro_rate, down_rate,down_dataset_mem, memory, memory_storage, num_obs, num_pro, num_down,dt, ilum_value_list,switchtime, switching_constraint)
     print("CP Model made for interval %i to %i" % (b,c))
 
+
+    if hint ==1:
+        (model, shifts, target_ilum) = AddHint(model, shifts, target_ilum, hint_shifts, hint_target_ilum, all_mod_shifts, all_action, all_sats)
     '''
     run model
     '''
     
     solver = cp_model.CpSolver()  
 
-    solver.parameters.max_time_in_seconds =500
+    solver.parameters.max_time_in_seconds =200
     solver.parameters.log_search_progress = True
     solver.parameters.num_search_workers = 8
     
