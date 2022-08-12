@@ -31,32 +31,29 @@ ideintification of intervals and initial values
 '''
 
 
-full_horizon = 2500
-interval_size = 5000
+full_horizon = 32000
+interval_size = 4000
 b = 0
-c = interval_size
+c = b + interval_size
 hint = 1
-switchtime =4
-affix = "pol/1s_5d/G40/"
+switchtime =2
+affix = "pol/10s_15d/G40/"
 switching_constraint = 1
-switchtime =1
-dt = 1
+switchtime =3
+dt = 10
 
 
 
 hint =1
-hot_start = 1 # defines whether it should start from data already partially optimised
+hot_start = 0 # defines whether it should start from data already partially optimised
 
-full_horizon = 4000
-interval_size = 1000
-b = 1000
-c = b+ interval_size
+
 
 
 num_interval = math.ceil(full_horizon/interval_size)
 
 
-file_affix = "1s_5d_pol_"
+file_affix = "10s_5d_pol_"
 
 
 
@@ -196,7 +193,7 @@ for interval in all_interval:
     
     solver = cp_model.CpSolver()  
 
-    solver.parameters.max_time_in_seconds =400
+    solver.parameters.max_time_in_seconds =1200
 
     solver.parameters.log_search_progress = True
     solver.parameters.num_search_workers = 4
