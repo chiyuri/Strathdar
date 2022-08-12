@@ -31,8 +31,8 @@ ideintification of intervals and initial values
 '''
 
 
-full_horizon = 32000
-interval_size = 4000
+full_horizon = 10000
+interval_size = 2500
 b = 0
 c = b + interval_size
 hint = 1
@@ -193,7 +193,7 @@ for interval in all_interval:
     
     solver = cp_model.CpSolver()  
 
-    solver.parameters.max_time_in_seconds =1200
+    solver.parameters.max_time_in_seconds =300
 
     solver.parameters.log_search_progress = True
     solver.parameters.num_search_workers = 4
@@ -244,11 +244,10 @@ for interval in all_interval:
             if solver.Value(shifts[(a,s)]) == 1:
               
                 scheduleWrite[s][a] = 1
-            for i in range(4):
-                multi =1
-                if i ==3:
-                    multi = 0.1
-                
+        for i in range(4):
+            multi =1
+            if i ==3:
+                multi = 0.1
                 scheduleWrite[s][i+4] = multi*solver.Value(Log[i][s])
             
         for sat in all_sats:
