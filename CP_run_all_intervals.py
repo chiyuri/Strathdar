@@ -87,8 +87,7 @@ num_down= 0
  
 
 
-<<<<<<< Updated upstream
-=======
+
 # read in data from alread optimised intervals into the hot start
 if hot_start == 1:
 
@@ -101,7 +100,7 @@ if hot_start == 1:
     num_down=  int(data[b][7])
     memory =   int( num_obs*obs_dataset_mem + num_pro*pro_dataset_mem)
     scheduleout= dfhot
->>>>>>> Stashed changes
+
 #making the dataframe to output the schedule
 #schedtemp = [[] for a in range(9)]
 
@@ -181,33 +180,25 @@ for interval in all_interval:
     (model, shifts, target_ilum, num_obs, num_pro, num_down, memory, Log) = CPModel_SC_data(any_ilum_list,gnd_stat_list, interval_size_CP_model,b, obs_dataset_mem, obs_rate, pro_dataset_mem,
                     pro_rate, down_rate,down_dataset_mem, memory, memory_storage, num_obs, num_pro, num_down,dt, ilum_value_list,switchtime, switching_constraint)
     print("CP Model made for interval %i to %i" % (b,c))
-<<<<<<< Updated upstream
 
+'''
+add hint
+'''
 
-    if hint ==1:
-        (model, shifts, target_ilum) = AddHint(model, shifts, target_ilum, hint_shifts, hint_target_ilum, all_mod_shifts, all_action, all_sats)
-=======
-    
-    '''
-    add hint
-    '''
     if hint ==1:
             (model, shifts, target_ilum) = AddHint(model, shifts, target_ilum, hint_shifts, hint_target_ilum, all_mod_shifts, all_action, all_sats)
             print("hint added")
->>>>>>> Stashed changes
+
     '''
     run model
     '''
     
     solver = cp_model.CpSolver()  
 
-<<<<<<< Updated upstream
     solver.parameters.max_time_in_seconds =200
-=======
-    solver.parameters.max_time_in_seconds =120
->>>>>>> Stashed changes
+
     solver.parameters.log_search_progress = True
-    solver.parameters.num_search_workers = 8
+    solver.parameters.num_search_workers = 4
     
     status = solver.Solve(model)
     
