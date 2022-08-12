@@ -42,7 +42,7 @@ switching_constraint=1
 switchtime = 1
 
 target_print = 0
-interval = 300 # length of interval to be optimised
+interval = 300# length of interval to be optimised
 start_shift=0
 
 obs_dataset_mem = int( 150e3/100 )# in 0.1 kB   
@@ -101,7 +101,7 @@ solving the CP model
 
 solver = cp_model.CpSolver()  
 
-solver.parameters.max_time_in_seconds =600
+solver.parameters.max_time_in_seconds =200
 solver.parameters.log_search_progress = True
 solver.parameters.num_search_workers = 4
 

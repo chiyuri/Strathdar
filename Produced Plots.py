@@ -21,7 +21,7 @@ from utils import postProcessing as post
 from utils import readwrite
 
 
-optimised_data = "results/1s_5d_Polar_iainLaptop_M8_D10_H11_min23/Alt_scheduleraw_up_to_shift 400.xlsx"
+optimised_data = "results/many_interval_test/Alt_scheduleraw_up_to_shift 7199.xlsx"
 dt = 1
 
 
@@ -31,7 +31,7 @@ df = pd.read_excel(optimised_data)
 data = df.values.tolist()
 
 #  reads in which illuminators are visible
-df = pd.read_csv("Data/1s_5d_polar/Avg objects Detection log.csv")
+df = pd.read_csv("Data/pol/1s_5d/G40/Avg objects Detection log.csv")
 ilum_value_list = df.values.tolist()
 
 data_length = len(data)
