@@ -23,13 +23,14 @@ import math
 import pandas as pd
 from ortools.sat.python import cp_model
 from Solver.CPModel_SC import CPModel_SC_data 
-from Solver.HintFunctions import CreateManHint, AddHint
+from Solver.HintFunctions import CreateManHint, AddHint, CreateManHint_SwitchingConstraint
 from utils import readwrite
 
 '''
 ideintification of intervals and initial values
 '''
 
+<<<<<<< Updated upstream
 full_horizon = 2500
 interval_size = 5000
 b = 0
@@ -39,7 +40,24 @@ switchtime =4
 affix = "pol/1s_5d/G40/"
 switching_constraint = 1
 dt = 1
+=======
+hint =1
+hot_start = 1  # defines whether it should start from data already partially optimised
+
+full_horizon = 7199
+interval_size = 1000
+b = 100
+c = b+ interval_size
+
+switchtime =1
+dt = 60
+>>>>>>> Stashed changes
 num_interval = math.ceil(full_horizon/interval_size)
+
+
+file_affix = "1s_5d_pol_"
+
+
 
 # used to define how long it takes to process each dataset
 FLOP_to_proc = 1000
@@ -64,11 +82,26 @@ all_mod_shifts = range(interval_size)
 
 memory= 0
 num_obs = 0
-num_pro= 0
+num_pro= 0  
 num_down= 0
  
 
 
+<<<<<<< Updated upstream
+=======
+# read in data from alread optimised intervals into the hot start
+if hot_start == 1:
+
+    optimised_data = "results/many_interval_test/Alt_scheduleraw_up_to_shift 7199.xlsx"
+    dfhot = pd.read_excel(optimised_data)
+    data = dfhot.values.tolist()
+
+    num_obs =  int(data[b][5])
+    num_pro=   int(data[b][6])
+    num_down=  int(data[b][7])
+    memory =   int( num_obs*obs_dataset_mem + num_pro*pro_dataset_mem)
+    scheduleout= dfhot
+>>>>>>> Stashed changes
 #making the dataframe to output the schedule
 #schedtemp = [[] for a in range(9)]
 
@@ -95,6 +128,9 @@ for interval in all_interval:
     interval_size_CP_model = c-b
     interval_shifts=range(b,c)
     all_mod_shifts = range(c-b)
+    
+    print("Started interval %i to %i" % (b,c))
+    print("\n")
     
     '''
     File read in 
@@ -130,6 +166,14 @@ for interval in all_interval:
         
     
     '''
+    Create hint
+    '''
+    
+    if hint ==1:
+        (hint_shifts, hint_target_ilum) = CreateManHint_SwitchingConstraint(any_ilum_list,ilum_value_list, gnd_stat_list, all_action,all_mod_shifts, all_sats, obs_dataset_mem, obs_rate, pro_dataset_mem,
+                                                        pro_rate, down_rate, memory, memory_storage, num_obs,num_pro, dt, switchtime)
+        print("hint made")
+    '''
     create model
     '''
     
@@ -137,17 +181,31 @@ for interval in all_interval:
     (model, shifts, target_ilum, num_obs, num_pro, num_down, memory, Log) = CPModel_SC_data(any_ilum_list,gnd_stat_list, interval_size_CP_model,b, obs_dataset_mem, obs_rate, pro_dataset_mem,
                     pro_rate, down_rate,down_dataset_mem, memory, memory_storage, num_obs, num_pro, num_down,dt, ilum_value_list,switchtime, switching_constraint)
     print("CP Model made for interval %i to %i" % (b,c))
+<<<<<<< Updated upstream
 
 
     if hint ==1:
         (model, shifts, target_ilum) = AddHint(model, shifts, target_ilum, hint_shifts, hint_target_ilum, all_mod_shifts, all_action, all_sats)
+=======
+    
+    '''
+    add hint
+    '''
+    if hint ==1:
+            (model, shifts, target_ilum) = AddHint(model, shifts, target_ilum, hint_shifts, hint_target_ilum, all_mod_shifts, all_action, all_sats)
+            print("hint added")
+>>>>>>> Stashed changes
     '''
     run model
     '''
     
     solver = cp_model.CpSolver()  
 
+<<<<<<< Updated upstream
     solver.parameters.max_time_in_seconds =200
+=======
+    solver.parameters.max_time_in_seconds =120
+>>>>>>> Stashed changes
     solver.parameters.log_search_progress = True
     solver.parameters.num_search_workers = 8
     
