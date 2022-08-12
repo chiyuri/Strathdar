@@ -30,7 +30,7 @@ from utils import readwrite
 ideintification of intervals and initial values
 '''
 
-<<<<<<< Updated upstream
+
 full_horizon = 2500
 interval_size = 5000
 b = 0
@@ -39,19 +39,20 @@ hint = 1
 switchtime =4
 affix = "pol/1s_5d/G40/"
 switching_constraint = 1
+switchtime =1
 dt = 1
-=======
-hint =1
-hot_start = 1  # defines whether it should start from data already partially optimised
 
-full_horizon = 7199
+
+
+hint =1
+hot_start = 1 # defines whether it should start from data already partially optimised
+
+full_horizon = 4000
 interval_size = 1000
-b = 100
+b = 1000
 c = b+ interval_size
 
-switchtime =1
-dt = 60
->>>>>>> Stashed changes
+
 num_interval = math.ceil(full_horizon/interval_size)
 
 
@@ -89,8 +90,8 @@ num_down= 0
 
 
 # read in data from alread optimised intervals into the hot start
-if hot_start == 1:
 
+if hot_start == 1:
     optimised_data = "results/many_interval_test/Alt_scheduleraw_up_to_shift 7199.xlsx"
     dfhot = pd.read_excel(optimised_data)
     data = dfhot.values.tolist()
@@ -181,10 +182,10 @@ for interval in all_interval:
                     pro_rate, down_rate,down_dataset_mem, memory, memory_storage, num_obs, num_pro, num_down,dt, ilum_value_list,switchtime, switching_constraint)
     print("CP Model made for interval %i to %i" % (b,c))
 
-'''
-add hint
-'''
-
+    '''
+    add hint
+    '''
+    
     if hint ==1:
             (model, shifts, target_ilum) = AddHint(model, shifts, target_ilum, hint_shifts, hint_target_ilum, all_mod_shifts, all_action, all_sats)
             print("hint added")
@@ -195,7 +196,7 @@ add hint
     
     solver = cp_model.CpSolver()  
 
-    solver.parameters.max_time_in_seconds =200
+    solver.parameters.max_time_in_seconds =400
 
     solver.parameters.log_search_progress = True
     solver.parameters.num_search_workers = 4

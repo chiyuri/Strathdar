@@ -163,7 +163,7 @@ def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_s
         model.Add(memory < memory_storage)
         
     
-    model.Maximize(sum(4*shifts[(2,s)]  + target_ilum[(sat,s)] * ilum_value_list[s][sat] for sat in all_sats for s in all_mod_shifts))
+    model.Maximize(sum(4*shifts[(2,s)]  + shifts[(0,s)]+ target_ilum[(sat,s)] * ilum_value_list[s][sat] for sat in all_sats for s in all_mod_shifts))
                                                                 #^^sum( target_ilum[(sat,s)]for sat in all_satsilum_value_list[s][sat]
     
     return model, shifts, target_ilum, num_obs, num_pro, num_down, memory, Log
