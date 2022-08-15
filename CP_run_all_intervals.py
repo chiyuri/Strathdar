@@ -31,9 +31,9 @@ ideintification of intervals and initial values
 '''
 
 
-full_horizon = 10000
-interval_size = 2000
-b = 5999
+full_horizon = 3000
+interval_size = 3000
+b = 0
 c = b + interval_size
 hint = 1
 switchtime =2
@@ -156,12 +156,14 @@ for interval in all_interval:
     
     
     
+    
     # make the hint for the model
+    '''
     if hint == 1:
         (hint_shifts, hint_target_ilum) = CreateManHint(any_ilum_list,ilum_value_list, gnd_stat_list, all_action,all_mod_shifts, all_sats, obs_dataset_mem, obs_rate, pro_dataset_mem,
                     pro_rate, down_rate, memory, memory_storage, num_obs,num_pro, dt, switching_constraint)
         
-    
+    '''
     '''
     Create hint
     '''
@@ -170,6 +172,7 @@ for interval in all_interval:
         (hint_shifts, hint_target_ilum) = CreateManHint_SwitchingConstraint(any_ilum_list,ilum_value_list, gnd_stat_list, all_action,all_mod_shifts, all_sats, obs_dataset_mem, obs_rate, pro_dataset_mem,
                                                         pro_rate, down_rate, memory, memory_storage, num_obs,num_pro, dt, switchtime)
         print("hint made")
+
     '''
     create model
     '''
@@ -239,7 +242,7 @@ for interval in all_interval:
     write values out to files
     '''
     scheduleWrite = [[0  for a in range(9)] for s in all_mod_shifts]
-    target_ilum_val_inv = [[0  for sat in all_sats] for s in all_mod_shifts] 
+    target_ilum_val_inv = [["-"  for sat in all_sats] for s in all_mod_shifts] 
     for s in all_mod_shifts:
         for a in all_action:
             if solver.Value(shifts[(a,s)]) == 1:

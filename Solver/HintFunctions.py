@@ -16,13 +16,14 @@ def CreateManHint(ilum_in_view,target_value, gnd_in_view, all_action,all_shifts,
     memory = memory_init
     num_pro = num_pro_init
     num_obs = num_obs_init
-    
+    num_dow = 0
+    Log = [[],[],[],[]]
     for s in all_shifts:
         
         if gnd_in_view[s] == 1 and num_pro> down_rate*dt:
             hint_shifts[2][s] = 1
             num_pro -= down_rate*dt
-        
+            num_dow += down_rate*dt
         elif sum(ilum_in_view[s][sat] for sat in all_sat) > 0 and memory <= memory_storage - obs_mem_size*obs_rate*dt:
             hint_shifts[0][s] = 1
             num_obs += obs_rate*dt
@@ -32,8 +33,11 @@ def CreateManHint(ilum_in_view,target_value, gnd_in_view, all_action,all_shifts,
             num_pro += pro_rate*dt
         else:
             hint_shifts[3][s] = 0
-        
-        
+        memory = num_obs*obs_mem_size + num_pro* pro_mem_size
+        Log[0].append(num_obs)
+        Log[1].append(num_pro)
+        Log[2].append(num_dow)
+        Log[3].append(memory)
         if switching_constraint != 1 or s<1:
             if max(target_value[s]) > 0:
                 maxval=0
@@ -58,7 +62,7 @@ def CreateManHint(ilum_in_view,target_value, gnd_in_view, all_action,all_shifts,
             else:
                 hint_target_ilum[index][s] = 1
                 
-    return hint_shifts, hint_target_ilum
+    return hint_shifts, hint_target_ilum, Log
 
 def CreateManHint_SwitchingConstraint(ilum_in_view,target_value, gnd_in_view, all_action,all_shifts, all_sat, obs_mem_size, obs_rate, pro_mem_size,
                     pro_rate, down_rate, memory_init, memory_storage, num_obs_init,num_pro_init, dt, switchtime):
@@ -109,6 +113,7 @@ def CreateManHint_SwitchingConstraint(ilum_in_view,target_value, gnd_in_view, al
                 hint_target_ilum[index][s] = 1
     
     return hint_shifts, hint_target_ilum
+
 
 def AddHint(model, shifts, target_ilum, hint_shifts, hint_target_ilum, all_mod_shifts, all_action, all_sats):
         

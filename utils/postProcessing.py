@@ -46,7 +46,7 @@ def memoryLogAssem(schedule, obs_mem_size, pro_mem_size, obs_rate, pro_rate, dow
         num_log[2][s] = num[2] 
         mem_log[2][s] = num_log[2][s]*dt/scalefactor
         # overall memory use
-        mem_log[3][s] = mem_log[0][s]+mem_log[1][s]/scalefactor
+        mem_log[3][s] = 64e3#mem_log[0][s]+mem_log[1][s]/scalefactor
     
     
     

@@ -21,8 +21,8 @@ from utils import postProcessing as post
 from utils import readwrite
 
 
-optimised_data = "results/many_interval_test/Alt_scheduleraw_up_to_shift 7199.xlsx"
-dt = 1
+optimised_data = "results/pol/10s_15d/G40/iainLaptopManual_M8_D15_H12_min38/Alt_scheduleraw_up_to_shift 10000.xlsx"
+dt = 10
 
 
 
@@ -31,14 +31,14 @@ df = pd.read_excel(optimised_data)
 data = df.values.tolist()
 
 #  reads in which illuminators are visible
-df = pd.read_csv("Data/pol/1s_5d/G40/Avg objects Detection log.csv")
+df = pd.read_csv("Data/pol/10s_15d/G40/Avg objects Detection log.csv")
 ilum_value_list = df.values.tolist()
 
 data_length = len(data)
 all_shifts = range(data_length)
 all_action = range(4)
 all_sat = range(66)
-time = [dt*t for t in all_shifts]
+time = [dt*t/3600 for t in all_shifts]
 
 # used to define how long it takes to process each dataset
 FLOP_to_proc = 1000
@@ -69,7 +69,7 @@ schedule_titles = ["Observe", "Process", "Downlink", "Idle"]
 schedule_inv = [[0  for s in all_shifts] for a in all_action]
 profitability_Log = [0 for s in all_shifts]
 profitability = 0
-profit_action = [0,0,4,0]
+profit_action = [1,0,2,0]
 
 for s in all_shifts:
     for a in all_action:
@@ -90,7 +90,7 @@ for s in all_shifts:
 Gantt_data = []
            
 for s in all_shifts:
-    tempDict = dict(start = s*dt, duration = dt, end = (s+1)*dt, action = schedule_abs[s])
+    tempDict = dict(start = s*dt/3600, duration = dt/3600, end = (s+1)*dt/3600, action = schedule_abs[s])
     Gantt_data.append(tempDict)
 
 

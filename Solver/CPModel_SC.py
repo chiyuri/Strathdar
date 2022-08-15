@@ -99,19 +99,20 @@ def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_s
         
         if switching_constraint ==1:
             for sat in all_sats:
+                model.Add(Any_Ilum_list[s][sat]> 0).OnlyEnforceIf(target_ilum[(sat,s)])
                 if Any_Ilum_list[s][sat] == 1:
                     if s > switchtime-1 and s < interval-switchtime-1:
                       
                             model.Add(sum(target_ilum[(sat_mod,s_mod)] for sat_mod in range(0,sat-1) for s_mod in range(s-switchtime,s+switchtime ) )  == 0).OnlyEnforceIf(target_ilum[(sat,s)])
-                            model.Add(sum(target_ilum[(sat_mod,s_mod)] for sat_mod in range(sat+1,65) for s_mod in range(s-switchtime,s+switchtime ) )  == 0).OnlyEnforceIf(target_ilum[(sat,s)])
+                            model.Add(sum(target_ilum[(sat_mod,s_mod)] for sat_mod in range(sat+1,66) for s_mod in range(s-switchtime,s+switchtime ) )  == 0).OnlyEnforceIf(target_ilum[(sat,s)])
                     elif s <= switchtime-1:
                         
                             model.Add(sum(target_ilum[(sat_mod,s_mod)] for sat_mod in range(0,sat-1) for s_mod in range(0,s+switchtime ) )  == 0).OnlyEnforceIf(target_ilum[(sat,s)])
-                            model.Add(sum(target_ilum[(sat_mod,s_mod)] for sat_mod in range(sat+1,65) for s_mod in range(0,s+switchtime ) )  == 0).OnlyEnforceIf(target_ilum[(sat,s)])
+                            model.Add(sum(target_ilum[(sat_mod,s_mod)] for sat_mod in range(sat+1,66) for s_mod in range(0,s+switchtime ) )  == 0).OnlyEnforceIf(target_ilum[(sat,s)])
                     elif s >= interval-switchtime-1:
                         
                             model.Add(sum(target_ilum[(sat_mod,s_mod)] for sat_mod in range(0,sat-1) for s_mod in range(s-switchtime, interval-1 ) )  == 0).OnlyEnforceIf(target_ilum[(sat,s)])
-                            model.Add(sum(target_ilum[(sat_mod,s_mod)] for sat_mod in range(sat+1,65) for s_mod in range(s-switchtime, interval-1 ) )  == 0).OnlyEnforceIf(target_ilum[(sat,s)])   
+                            model.Add(sum(target_ilum[(sat_mod,s_mod)] for sat_mod in range(sat+1,66) for s_mod in range(s-switchtime, interval-1 ) )  == 0).OnlyEnforceIf(target_ilum[(sat,s)])   
                             '''
             if switching_constraint ==1:
             if any_ilum_list[s][sat] == 1

@@ -20,7 +20,7 @@ def ganttChart(df,titles):
     
     
     
-    fig, ax = plt.subplots(1, figsize = (24,6))
+    fig, ax = plt.subplots(1, figsize = (15,6))
     
     ax.barh(df.action , df.duration, left=df.start)
     fig.show()
@@ -36,22 +36,22 @@ def memoryGraph(memoryLog, time):
     #Creates a plot of the memory used storying observed and processed datasets as well as the total memory use
     
     plt.figure(2)
-    plt.plot(time,memoryLog[0])
-    plt.plot(time,memoryLog[1])
-    plt.plot(time,memoryLog[3])
+    plt.plot(time,memoryLog[0], color = 'green')
+    plt.plot(time,memoryLog[1], color = 'blue')
+    plt.plot(time,memoryLog[3], color = 'grey', linestyle='dashed')
     plt.title("Storage use over time")
-    plt.xlabel("time (s)")
+    plt.xlabel("time (hr)")
     plt.ylabel("memory used (MB)")
-    plt.legend(["Observation Data set memory use","processed data set memory use","overall memory use"])
+    plt.legend(["Observation Data set memory use","processed data set memory use","Max storage"])
     ax = plt.gca()
     #ax.set_xticklabels([])
 
     plt.figure(3)
-    plt.plot(time,memoryLog[1])
-    plt.plot(time,memoryLog[2])
+    plt.plot(time,memoryLog[1],color = 'blue')
+    plt.plot(time,memoryLog[2],color = 'red')
     plt.title("storage used and downlniked over time ")
     plt.legend(["Processed","Downlinked"])
-    plt.xlabel("time (s)")
+    plt.xlabel("time (hr)")
     plt.ylabel("memory used (MB)")
     ax = plt.gca()
     #ax.set_xticklabels([])    
@@ -63,7 +63,7 @@ def ProObsGraph(ProObsLog,time):
     plt.figure(4)
     plt.plot(time, ProObsLog)
     plt.title("Processed and Observations over time")
-    plt.xlabel("time (s)")
+    plt.xlabel("time (hr)")
     plt.ylabel("number processed/observed datasets")
     plt.legend(["observations", "processed","Downlinked"])
     ax = plt.gca()
@@ -77,7 +77,7 @@ def downlinkingGraph(downlink, time):
     plt.figure(5)
     plt.plot(time, downlink)
     plt.title("downlinking activity over time")
-    plt.xlabel("time (s)")
+    plt.xlabel("time (hr)")
     plt.ylabel("downlinking (y/n)")
     ax = plt.gca()
     ax.set_xticklabels([])
@@ -108,7 +108,7 @@ def ObsValueGraph(ilum_value_list,target_ilum, action, time, all_T, all_sats):
     plt.plot(time, valueObs)
     
     plt.title("Iluminator value, tatgeted and available")
-    plt.xlabel("time (s)")
+    plt.xlabel("time (hr)")
     plt.ylabel("iluminator value (avg objects detected)")
     plt.legend(["Ilum value available","Target Ilum Value"])
     ax = plt.gca()
@@ -124,7 +124,7 @@ def ProfitGraph(profitability, time):
     plt.figure(5)
     plt.plot(time, profitability)
     plt.title("schedule profit over time")
-    plt.xlabel("time (s)")
+    plt.xlabel("time (hr)")
     plt.ylabel("profit")
     ax = plt.gca()
 
