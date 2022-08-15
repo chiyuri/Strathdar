@@ -130,6 +130,16 @@ def ProfitGraph(profitability, time):
 
     
     
+def detectionsGraph(detections, time):
+    
+    # plots expexted detections against time
+    
+    plt.figure(6)
+    plt.plot(time, detections)
+    plt.title("expected destections over time")
+    plt.xlabel("time (hr)")
+    plt.ylabel("detections")
+    ax = plt.gca()
     
     
     

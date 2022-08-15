@@ -21,7 +21,7 @@ from utils import postProcessing as post
 from utils import readwrite
 
 
-optimised_data = "results/pol/10s_15d/G40/iainLaptopManual_M8_D15_H12_min38/Alt_scheduleraw_up_to_shift 10000.xlsx"
+optimised_data = "results/pol/10s_15d/G40/iainLaptop_M8_D15_H12_min44/Alt_scheduleraw_up_to_shift 21000.xlsx"
 dt = 10
 
 
@@ -69,7 +69,9 @@ schedule_titles = ["Observe", "Process", "Downlink", "Idle"]
 schedule_inv = [[0  for s in all_shifts] for a in all_action]
 profitability_Log = [0 for s in all_shifts]
 profitability = 0
-profit_action = [1,0,2,0]
+profit_action = [66,0,66*4,0]
+num_detect= 0
+num_detect_Log = [0 for s in all_shifts]
 
 for s in all_shifts:
     for a in all_action:
@@ -82,13 +84,13 @@ for s in all_shifts:
     for sat in all_sat:
         if data[s][9] == sat and data[s][1] == 1:
             profitability += math.floor(ilum_value_list[s][sat]*10000)
-    
+            num_detect += ilum_value_list[s][sat]
     profitability_Log[s]= profitability
-    
+    num_detect_Log[s] = num_detect
     
  # loop to assign gantt data to dictionary so it can be plotted   
 Gantt_data = []
-           
+          
 for s in all_shifts:
     tempDict = dict(start = s*dt/3600, duration = dt/3600, end = (s+1)*dt/3600, action = schedule_abs[s])
     Gantt_data.append(tempDict)
@@ -107,5 +109,5 @@ pf.memoryGraph(memoryLogs,time)
 pf.memoryGraph(memoryLogs,time)
 
 pf.ProfitGraph(profitability_Log, time)
-
-
+pf.detectionsGraph(num_detect_Log,time)
+print(num_detect)
