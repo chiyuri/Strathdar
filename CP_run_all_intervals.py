@@ -133,7 +133,12 @@ for interval in all_interval:
     
     solver = cp_model.CpSolver()  
 
+<<<<<<< Updated upstream
     solver.parameters.max_time_in_seconds =500
+=======
+    solver.parameters.max_time_in_seconds =600
+
+>>>>>>> Stashed changes
     solver.parameters.log_search_progress = True
     solver.parameters.num_search_workers = 8
     
