@@ -32,8 +32,8 @@ ideintification of intervals and initial values
 
 
 full_horizon = 10000
-interval_size = 2500
-b = 0
+interval_size = 2000
+b = 5999
 c = b + interval_size
 hint = 1
 switchtime =2
@@ -45,7 +45,7 @@ dt = 10
 
 
 hint =1
-hot_start = 0 # defines whether it should start from data already partially optimised
+hot_start =0# defines whether it should start from data already partially optimised
 
 
 
@@ -89,7 +89,7 @@ num_down= 0
 # read in data from alread optimised intervals into the hot start
 
 if hot_start == 1:
-    optimised_data = "results/many_interval_test/Alt_scheduleraw_up_to_shift 7199.xlsx"
+    optimised_data = "results/pol/10s_15d/G40/iainLaptop_M8_D15_H10_min35/Alt_scheduleraw_up_to_shift 6000.xlsx"
     dfhot = pd.read_excel(optimised_data)
     data = dfhot.values.tolist()
 
@@ -194,7 +194,7 @@ for interval in all_interval:
     solver = cp_model.CpSolver()  
 
 
-    solver.parameters.max_time_in_seconds =600
+    solver.parameters.max_time_in_seconds =300
 
     solver.parameters.log_search_progress = True
     solver.parameters.num_search_workers = 8
@@ -249,8 +249,9 @@ for interval in all_interval:
             multi =1
             if i ==3:
                 multi = 0.1
-                scheduleWrite[s][i+4] = multi*solver.Value(Log[i][s])
+            scheduleWrite[s][i+4] = multi*solver.Value(Log[i][s])
             
+                
         for sat in all_sats:
             if solver.Value(target_ilum[(sat,s)]) == 1:
                 scheduleWrite[s][8] = sat
