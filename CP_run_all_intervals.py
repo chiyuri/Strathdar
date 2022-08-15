@@ -193,10 +193,11 @@ for interval in all_interval:
     
     solver = cp_model.CpSolver()  
 
-    solver.parameters.max_time_in_seconds =300
+
+    solver.parameters.max_time_in_seconds =600
 
     solver.parameters.log_search_progress = True
-    solver.parameters.num_search_workers = 4
+    solver.parameters.num_search_workers = 8
     
     status = solver.Solve(model)
     
