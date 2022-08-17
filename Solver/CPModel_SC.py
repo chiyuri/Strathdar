@@ -164,12 +164,148 @@ def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_s
         model.Add(memory < memory_storage)
         
         
-    model.Maximize(sum(4*shifts[(2,s)]  + 1*shifts[(0,s)] + target_ilum[(sat,s)] * ilum_value_list[s][sat] for sat in all_sats for s in all_mod_shifts))
+    model.Maximize(sum(shifts[(2,s)]  + target_ilum[(sat,s)] * ilum_value_list[s][sat] for sat in all_sats for s in all_mod_shifts))
                                                                 #^^sum( target_ilum[(sat,s)]for sat in all_satsilum_value_list[s][sat]
     
     return model, shifts, target_ilum, num_obs, num_pro, num_down, memory, Log
         
 
+
+def CPModel_SC_data_endpoint_constraints(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_size, obs_rate, pro_mem_size,
+                    pro_rate, down_rate,down_mem_size, memory_init, memory_storage, num_obs_init, num_pro_init, num_down_init,dt, ilum_value_list, switchtime, switching_constraint, endpoint_constraints):
+    
+    model = cp_model.CpModel()
+    num_actions = 4
+    num_sats = 66
+    all_action = range(num_actions)
+    all_mod_shifts = range(interval)
+    all_shifts = range(start_shift, interval + start_shift)
+    all_sats = range(num_sats)
+    
+    b = start_shift
+    '''
+    endpoint_constraints[0] represents number of observations it should finish at
+    endpoint_constraints[1] represents number of proccesed it should finish at
+    endpoint_constraints[2] represents number of downlinke it should finish at
+    endpoint_constraints[3] represents the amount of memory used that it should finish at (may not be necessary as other 3 necessairly achieve this constraint)
+    '''  
+    # making the boolean variable which contains the action chosen by the optimiser
+    shifts = {}
+    target_ilum = {}
+    index = {}
+    for s in all_mod_shifts:
+        
+        
+        for a in all_action:
+            shifts[(a,s)] = model.NewBoolVar('Shift_A%i_S%i' % (a,s))
+        for sat in all_sats:
+            target_ilum[(sat,s)] = model.NewBoolVar('Target_Ilum_Sat%i_S%i' % (sat,s))
+            
+            #indexed positions are:
+            # 0 = observing
+            # 1 = processing
+            # 2 = downlinking
+            # 3 = idling
+      
+    # limits the optimiser to one action at any time
+    
+    for s in all_mod_shifts:
+        model.AddExactlyOne(shifts[(a,s)] for a in all_action)
+        model.AddAtMostOne(target_ilum[(sat,s)] for sat in all_sats)
+        
+        
+    for s in all_mod_shifts:
+        # requires an illuminator to be in view for observing to occur
+        AnyIlum = sum(Any_Ilum_list[s][sat] for sat in all_sats)
+        model.Add( AnyIlum > 0).OnlyEnforceIf(shifts[(0,s)])
+        # requires a ground station to be in view for downlinking to occur
+        model.Add(Gnd_stat_list[s] > 0).OnlyEnforceIf(shifts[(2,s)])
+        
+        #constraint to ensure that a illuminator is targeted when observing 
+        model.Add(sum(target_ilum[(sat,s)] for sat in all_sats) > 0 ).OnlyEnforceIf(shifts[(0,s)])
+        #constraint to ensure no illuminator is targetes when not observing
+        model.Add(sum(target_ilum[(sat,s)] for sat in all_sats) == 0 ).OnlyEnforceIf(shifts[(0,s)].Not())
+        
+        if switching_constraint ==1:
+            for sat in all_sats:
+                model.Add(Any_Ilum_list[s][sat]> 0).OnlyEnforceIf(target_ilum[(sat,s)])
+                if Any_Ilum_list[s][sat] == 1:
+                    if s > switchtime-1 and s < interval-switchtime-1:
+                      
+                            model.Add(sum(target_ilum[(sat_mod,s_mod)] for sat_mod in range(0,sat-1) for s_mod in range(s-switchtime,s+switchtime ) )  == 0).OnlyEnforceIf(target_ilum[(sat,s)])
+                            model.Add(sum(target_ilum[(sat_mod,s_mod)] for sat_mod in range(sat+1,66) for s_mod in range(s-switchtime,s+switchtime ) )  == 0).OnlyEnforceIf(target_ilum[(sat,s)])
+                    elif s <= switchtime-1:
+                        
+                            model.Add(sum(target_ilum[(sat_mod,s_mod)] for sat_mod in range(0,sat-1) for s_mod in range(0,s+switchtime ) )  == 0).OnlyEnforceIf(target_ilum[(sat,s)])
+                            model.Add(sum(target_ilum[(sat_mod,s_mod)] for sat_mod in range(sat+1,66) for s_mod in range(0,s+switchtime ) )  == 0).OnlyEnforceIf(target_ilum[(sat,s)])
+                    elif s >= interval-switchtime-1:
+                        
+                            model.Add(sum(target_ilum[(sat_mod,s_mod)] for sat_mod in range(0,sat-1) for s_mod in range(s-switchtime, interval-1 ) )  == 0).OnlyEnforceIf(target_ilum[(sat,s)])
+                            model.Add(sum(target_ilum[(sat_mod,s_mod)] for sat_mod in range(sat+1,66) for s_mod in range(s-switchtime, interval-1 ) )  == 0).OnlyEnforceIf(target_ilum[(sat,s)])   
+                            '''
+            if switching_constraint ==1:
+            if any_ilum_list[s][sat] == 1
+                if s > switchtime-1 and s < interval-switchtime-1:
+                    for sat in all_sats:
+                        model.Add(sum(target_ilum[(sat_mod,s_mod)] for sat_mod in range(0,sat-1) for s_mod in range(s-switchtime,s+switchtime ) )  == 0).OnlyEnforceIf(target_ilum[(sat,s)])
+                        model.Add(sum(target_ilum[(sat_mod,s_mod)] for sat_mod in range(sat+1,65) for s_mod in range(s-switchtime,s+switchtime ) )  == 0).OnlyEnforceIf(target_ilum[(sat,s)])
+                elif s <= switchtime-1:
+                    for sat in all_sats:
+                        model.Add(sum(target_ilum[(sat_mod,s_mod)] for sat_mod in range(0,sat-1) for s_mod in range(0,s+switchtime ) )  == 0).OnlyEnforceIf(target_ilum[(sat,s)])
+                        model.Add(sum(target_ilum[(sat_mod,s_mod)] for sat_mod in range(sat+1,65) for s_mod in range(0,s+switchtime ) )  == 0).OnlyEnforceIf(target_ilum[(sat,s)])
+                elif s >= interval-switchtime-1:
+                    for sat in all_sats:
+                        model.Add(sum(target_ilum[(sat_mod,s_mod)] for sat_mod in range(0,sat-1) for s_mod in range(s-switchtime, interval-1 ) )  == 0).OnlyEnforceIf(target_ilum[(sat,s)])
+                        model.Add(sum(target_ilum[(sat_mod,s_mod)] for sat_mod in range(sat+1,65) for s_mod in range(s-switchtime, interval-1 ) )  == 0).OnlyEnforceIf(target_ilum[(sat,s)])   
+         '''
+             
+    if b == 0 :
+        memory = int(0) 
+
+        num_obs = int( 0)
+        num_pro = int(0)
+        num_down = int(0)
+    else:
+        memory = memory_init  # needs to be replaced with a file read in
+        num_obs = num_obs_init
+        num_pro = num_pro_init
+        num_down = num_down_init
+   
+    
+    Log = [[],[],[],[]]
+    for s in all_mod_shifts:
+        
+        num_obs += dt*(shifts[(0,s)] * obs_rate - shifts[(1,s)]  * pro_rate) #100 = one 1 seconde dataset
+        Log[0].append(num_obs) 
+        num_pro += dt*(shifts[(1,s)] * pro_rate - shifts[(2,s)] * down_rate) #100 = one 1 seconde dataset
+        Log[1].append(num_pro)
+        num_down += dt*(shifts[(2,s)] * down_rate) #100 = one 1 second dataset
+        Log[2].append(num_down)
+        #memory += (shifts[(0,s)] * obs_rate *obs_mem_size + shifts[(1,s)] *pro_rate* (pro_mem_size - obs_mem_size)   - shifts[(2,s)] *int( (down_rate)))
+        #memory += *obs_mem_size + num_pro*pro_mem_size
+        memory += dt*(shifts[(0,s)] * obs_rate *obs_mem_size  + shifts[(1,s)] *pro_rate* (pro_mem_size - obs_mem_size)- shifts[(2,s)] *down_rate*down_mem_size)
+        Log[3].append(memory)
+        # require data sets to be available for processing for processing to occur
+        model.Add(num_obs >= pro_rate*dt).OnlyEnforceIf(shifts[(1,s)])
+        # requires processed data sets to available for downlinking to occur
+        model.Add(num_pro*pro_mem_size >= down_rate*dt).OnlyEnforceIf(shifts[(2,s)])
+        #requires used memory to remain below memory available
+        model.Add(memory < memory_storage)
+        if s == interval-1:
+            model.Add(num_obs > endpoint_constraints[0] - 2*dt*obs_rate)
+            model.Add(num_obs < endpoint_constraints[0] + 2*dt*obs_rate)
+            model.Add(num_pro > endpoint_constraints[1] - 2*dt*pro_rate)
+            model.Add(num_pro < endpoint_constraints[1] + 2*dt*pro_rate)
+            model.Add(num_down > endpoint_constraints[2] - 2*dt*down_rate)
+            model.Add(num_down < endpoint_constraints[2] + 2*dt*down_rate)
+        
+    model.Maximize(sum(shifts[(2,s)]  + target_ilum[(sat,s)] * ilum_value_list[s][sat] for sat in all_sats for s in all_mod_shifts))
+                                                                #^^sum( target_ilum[(sat,s)]for sat in all_satsilum_value_list[s][sat]
+    
+    return model, shifts, target_ilum, num_obs, num_pro, num_down, memory, Log
+        
+
+  
   
         
     

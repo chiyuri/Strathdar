@@ -21,7 +21,7 @@ from utils import postProcessing as post
 from utils import readwrite
 
 
-optimised_data = "results/pol/10s_15d/G40/iainLaptop_M8_D15_H12_min44/Alt_scheduleraw_up_to_shift 21000.xlsx"
+optimised_data = "results/pol/10s_15d/G40/iainLaptop_M8_D16_H10_min43/Alt_scheduleraw_up_to_shift 10000.xlsx"
 dt = 10
 
 
@@ -69,7 +69,7 @@ schedule_titles = ["Observe", "Process", "Downlink", "Idle"]
 schedule_inv = [[0  for s in all_shifts] for a in all_action]
 profitability_Log = [0 for s in all_shifts]
 profitability = 0
-profit_action = [66,0,66*4,0]
+profit_action = [0,0,66,0]
 num_detect= 0
 num_detect_Log = [0 for s in all_shifts]
 

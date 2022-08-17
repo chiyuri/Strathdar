@@ -23,6 +23,7 @@ def ganttChart(df,titles):
     fig, ax = plt.subplots(1, figsize = (15,6))
     
     ax.barh(df.action , df.duration, left=df.start)
+    
     fig.show()
     
     """
