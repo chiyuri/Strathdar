@@ -151,9 +151,7 @@ def CPModel_SC_data(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_s
     return model, shifts, target_ilum, num_obs, num_pro, num_down, memory, Log
         
 
-  
-<<<<<<< Updated upstream
-=======
+
   
 
 def CPModel_SC_No_process(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs_mem_size, obs_rate, pro_mem_size,
@@ -278,8 +276,5 @@ def CPModel_SC_No_process(Any_Ilum_list,Gnd_stat_list, interval,start_shift, obs
                                                                 #^^sum( target_ilum[(sat,s)]for sat in all_satsilum_value_list[s][sat]
     
     return model, shifts, target_ilum, num_obs, num_pro, num_down, memory, Log
-        
-
->>>>>>> Stashed changes
-        
+              
     

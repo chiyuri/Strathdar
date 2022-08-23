@@ -22,13 +22,10 @@ import datetime
 import math
 import pandas as pd
 from ortools.sat.python import cp_model
-<<<<<<< Updated upstream
-from Solver.CPModel_SC import CPModel_SC_data 
-from Solver.HintFunctions import CreateManHint, AddHint
-=======
+
 from Solver.CPModel_SC import CPModel_SC_data , CPModel_SC_No_process
 from Solver.HintFunctions import CreateManHint, AddHint, CreateManHint_SwitchingConstraint
->>>>>>> Stashed changes
+
 from utils import readwrite
 
 '''
@@ -38,12 +35,7 @@ ideintification of intervals and initial values
 full_horizon = 86400
 interval_size = 3000
 b = 0
-<<<<<<< Updated upstream
-c = interval_size
-hint = 0
-switchtime =10
-dt = 1
-=======
+
 c = b + interval_size
 hint = 1
 switchtime =2
@@ -60,7 +52,7 @@ hot_start =0# defines whether it should start from data already partially optimi
 
 
 
->>>>>>> Stashed changes
+
 num_interval = math.ceil(full_horizon/interval_size)
 
 # used to define how long it takes to process each dataset
@@ -100,11 +92,9 @@ day = str(current_time.day)
 hour = str(current_time.hour)
 minute = str(current_time.minute)
 time_now = "_M" + month + "_D" +day +"_H" + hour + "_min" + minute
-<<<<<<< Updated upstream
-path = "./results/1s_5d_Polar_iainLaptop"
-=======
+
 path = "./results/" + affix + "/proc_2k/iainLaptop"
->>>>>>> Stashed changes
+
 path = path +time_now
 os.mkdir(path)
 path = path+ "/"
@@ -161,12 +151,9 @@ for interval in all_interval:
     
     solver = cp_model.CpSolver()  
 
-<<<<<<< Updated upstream
-    solver.parameters.max_time_in_seconds =500
-=======
-    solver.parameters.max_time_in_seconds =600
 
->>>>>>> Stashed changes
+    solver.parameters.max_time_in_seconds =500
+
     solver.parameters.log_search_progress = True
     solver.parameters.num_search_workers = 8
     
