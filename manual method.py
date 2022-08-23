@@ -24,20 +24,15 @@ ideintification of intervals and initial values
 '''
 
 
-full_horizon = 10000
-interval_size = 10000
+full_horizon = 21000
+interval_size = 21000
 b = 0
 c = b + interval_size
 hint = 1
-switchtime =2
-affix = "pol/10s_15d/G40/"
+switchtime =1
+affix = "pol/60s_30d/G40/"
 switching_constraint = 1
-switchtime =3
-dt = 10
-
-
-
-hint =1
+dt = 60
 hot_start =0# defines whether it should start from data already partially optimised
 
 
@@ -46,7 +41,7 @@ hot_start =0# defines whether it should start from data already partially optimi
 num_interval = math.ceil(full_horizon/interval_size)
 
 
-file_affix = "10s_5d_pol_"
+file_affix = "60s_30d_pol_"
 
 
 

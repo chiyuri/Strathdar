@@ -23,7 +23,6 @@ def ganttChart(df,titles):
     fig, ax = plt.subplots(1, figsize = (15,6))
     
     ax.barh(df.action , df.duration, left=df.start)
-    
     fig.show()
     
     """
@@ -41,7 +40,7 @@ def memoryGraph(memoryLog, time):
     plt.plot(time,memoryLog[1], color = 'blue')
     plt.plot(time,memoryLog[3], color = 'grey', linestyle='dashed')
     plt.title("Storage use over time")
-    plt.xlabel("time (hr)")
+    plt.xlabel("Time (hr)")
     plt.ylabel("memory used (MB)")
     plt.legend(["Observation Data set memory use","processed data set memory use","Max storage"])
     ax = plt.gca()
@@ -50,10 +49,10 @@ def memoryGraph(memoryLog, time):
     plt.figure(3)
     plt.plot(time,memoryLog[1],color = 'blue')
     plt.plot(time,memoryLog[2],color = 'red')
-    plt.title("storage used and downlniked over time ")
+    plt.title("Processed and Downlniked data over time ")
     plt.legend(["Processed","Downlinked"])
     plt.xlabel("time (hr)")
-    plt.ylabel("memory used (MB)")
+    plt.ylabel("Data (MB)")
     ax = plt.gca()
     #ax.set_xticklabels([])    
     
@@ -124,7 +123,7 @@ def ProfitGraph(profitability, time):
     
     plt.figure(5)
     plt.plot(time, profitability)
-    plt.title("schedule profit over time")
+    plt.title("Schedule profit over time")
     plt.xlabel("time (hr)")
     plt.ylabel("profit")
     ax = plt.gca()
@@ -137,9 +136,9 @@ def detectionsGraph(detections, time):
     
     plt.figure(6)
     plt.plot(time, detections)
-    plt.title("expected destections over time")
-    plt.xlabel("time (hr)")
-    plt.ylabel("detections")
+    plt.title("Expected destections over time")
+    plt.xlabel("Time (hr)")
+    plt.ylabel("Detections")
     ax = plt.gca()
     
     

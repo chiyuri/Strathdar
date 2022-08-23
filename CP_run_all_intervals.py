@@ -22,8 +22,10 @@ import datetime
 import math
 import pandas as pd
 from ortools.sat.python import cp_model
-from Solver.CPModel_SC import CPModel_SC_data 
+
+from Solver.CPModel_SC import CPModel_SC_data , CPModel_SC_No_process
 from Solver.HintFunctions import CreateManHint, AddHint, CreateManHint_SwitchingConstraint
+
 from utils import readwrite
 
 '''
@@ -39,7 +41,6 @@ hint = 1
 switchtime =2
 affix = "pol/60s_30d/G40/"
 switching_constraint = 1
-switchtime =1
 dt = 60
 
 
@@ -58,7 +59,7 @@ file_affix = "60s_30d_pol_"
 
 
 # used to define how long it takes to process each dataset
-FLOP_to_proc = 1000
+FLOP_to_proc = 2000
 FLOPS_available = 100 # giga flops
 
 obs_dataset_mem = int( 150e3/100 )# in 0.1 kB   
@@ -109,7 +110,9 @@ day = str(current_time.day)
 hour = str(current_time.hour)
 minute = str(current_time.minute)
 time_now = "_M" + month + "_D" +day +"_H" + hour + "_min" + minute
-path = "./results/" + affix + "iainLaptop"
+
+path = "./results/" + affix + "/proc_2k/iainLaptop"
+
 path = path +time_now
 os.mkdir(path)
 path = path+ "/"

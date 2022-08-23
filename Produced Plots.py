@@ -21,8 +21,8 @@ from utils import postProcessing as post
 from utils import readwrite
 
 
-optimised_data = "results/pol/10s_15d/G40/iainLaptop_M8_D16_H10_min43/Alt_scheduleraw_up_to_shift 10000.xlsx"
-dt = 10
+optimised_data = "results/pol/60s_30d/G40/iainLaptop_NoProcess_M8_D18_H14_min37/Alt_scheduleraw_up_to_shift 6000.xlsx"
+dt = 60
 
 
 
@@ -31,7 +31,7 @@ df = pd.read_excel(optimised_data)
 data = df.values.tolist()
 
 #  reads in which illuminators are visible
-df = pd.read_csv("Data/pol/10s_15d/G40/Avg objects Detection log.csv")
+df = pd.read_csv("Data/pol/60s_30d/G40/Avg objects Detection log.csv")
 ilum_value_list = df.values.tolist()
 
 data_length = len(data)
@@ -84,7 +84,7 @@ for s in all_shifts:
     for sat in all_sat:
         if data[s][9] == sat and data[s][1] == 1:
             profitability += math.floor(ilum_value_list[s][sat]*10000)
-            num_detect += ilum_value_list[s][sat]
+            num_detect += dt*ilum_value_list[s][sat]
     profitability_Log[s]= profitability
     num_detect_Log[s] = num_detect
     
