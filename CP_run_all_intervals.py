@@ -34,7 +34,7 @@ ideintification of intervals and initial values
 
 
 full_horizon = 21000
-interval_size = 3000
+interval_size = 1500
 b = 0
 c = b + interval_size
 hint = 1
@@ -59,7 +59,7 @@ file_affix = "60s_30d_pol_"
 
 
 # used to define how long it takes to process each dataset
-FLOP_to_proc = 2000
+FLOP_to_proc = 500
 FLOPS_available = 100 # giga flops
 
 obs_dataset_mem = int( 150e3/100 )# in 0.1 kB   
@@ -200,7 +200,7 @@ for interval in all_interval:
     solver = cp_model.CpSolver()  
 
 
-    solver.parameters.max_time_in_seconds =600
+    solver.parameters.max_time_in_seconds =900
 
     solver.parameters.log_search_progress = True
     solver.parameters.num_search_workers = 8

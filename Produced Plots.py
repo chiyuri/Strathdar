@@ -12,6 +12,7 @@ Creates plots and post processing data from xlsx sheets with the results from
 the optimisation
 '''
 
+import os
 import math
 import pandas as pd
 from ortools.sat.python import cp_model
@@ -21,10 +22,13 @@ from utils import postProcessing as post
 from utils import readwrite
 
 
-optimised_data = "results/pol/60s_30d/G40/iainLaptop_NoProcess_M8_D18_H14_min37/Alt_scheduleraw_up_to_shift 6000.xlsx"
+filename = "iainLaptopManual_M8_D18_H11_min48"
+affix = "pol/60s_30d/G40/"
+optimised_data = "results/" +affix + filename + "/Alt_scheduleraw_up_to_shift 21000.xlsx"
 dt = 60
 
-
+path = "results/figures/"+ affix +filename
+os.mkdir(path)
 
 
 df = pd.read_excel(optimised_data)
@@ -99,15 +103,15 @@ for s in all_shifts:
 
 
 Gantt_df = pd.DataFrame(Gantt_data)
-pf.ganttChart(Gantt_df,schedule_titles)
+pf.ganttChart(Gantt_df,schedule_titles,path)
 
 
 
 (memoryLogs, num_logs) = post.memoryLogAssem(schedule_inv, obs_dataset_mem, pro_dataset_mem, obs_rate, pro_rate, down_rate,dt)
-pf.memoryGraph(memoryLogs,time)
+pf.memoryGraph(memoryLogs,time,path)
 
-pf.memoryGraph(memoryLogs,time)
+pf.memoryGraph(memoryLogs,time,path)
 
-pf.ProfitGraph(profitability_Log, time)
-pf.detectionsGraph(num_detect_Log,time)
+pf.ProfitGraph(profitability_Log, time,path)
+pf.detectionsGraph(num_detect_Log,time,path)
 print(num_detect)

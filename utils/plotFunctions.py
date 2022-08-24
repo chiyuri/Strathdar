@@ -14,7 +14,7 @@ import numpy as np
 
 
 
-def ganttChart(df,titles):
+def ganttChart(df,titles,path):
     
     # function for creating Gantt chart from a set of tasks completed at associated times, the time index they are against, and the task names
     
@@ -24,6 +24,8 @@ def ganttChart(df,titles):
     
     ax.barh(df.action , df.duration, left=df.start)
     fig.show()
+    name = path + "/ganttChart.png"
+    fig.savefig(name)
     
     """
     fig = px.timeline(df, x_start ="start", x_end = "end", y = "action",color = "action") 
@@ -31,7 +33,7 @@ def ganttChart(df,titles):
     #fig.write_image(file="gantt_test", format='png', scale=1, width=2500, height=1250)
     """
     
-def memoryGraph(memoryLog, time):
+def memoryGraph(memoryLog, time,path):
     
     #Creates a plot of the memory used storying observed and processed datasets as well as the total memory use
     
@@ -45,6 +47,8 @@ def memoryGraph(memoryLog, time):
     plt.legend(["Observation Data set memory use","processed data set memory use","Max storage"])
     ax = plt.gca()
     #ax.set_xticklabels([])
+    name = path + "/unprocessed_memory.png"
+    plt.savefig(name)
 
     plt.figure(3)
     plt.plot(time,memoryLog[1],color = 'blue')
@@ -55,8 +59,10 @@ def memoryGraph(memoryLog, time):
     plt.ylabel("Data (MB)")
     ax = plt.gca()
     #ax.set_xticklabels([])    
-    
-def ProObsGraph(ProObsLog,time):
+    name = path + "/processed_memory.png"
+    plt.savefig(name)
+
+def ProObsGraph(ProObsLog,time,path):
     
     # plots the number of processed and observed datasets over time as well as overall memory use
     
@@ -67,6 +73,8 @@ def ProObsGraph(ProObsLog,time):
     plt.ylabel("number processed/observed datasets")
     plt.legend(["observations", "processed","Downlinked"])
     ax = plt.gca()
+    name = path + "/prosObsGraph_memory.png"
+    plt.savefig(name)
     #ax.set_xticklabels([])
     
     
@@ -117,7 +125,7 @@ def ObsValueGraph(ilum_value_list,target_ilum, action, time, all_T, all_sats):
     
     
     
-def ProfitGraph(profitability, time):
+def ProfitGraph(profitability, time,path):
      
     # plots the schedules profitability over time
     
@@ -128,9 +136,10 @@ def ProfitGraph(profitability, time):
     plt.ylabel("profit")
     ax = plt.gca()
 
+    name = path + "/profit_graph.png"
+    plt.savefig(name)
     
-    
-def detectionsGraph(detections, time):
+def detectionsGraph(detections, time,path):
     
     # plots expexted detections against time
     
@@ -140,7 +149,8 @@ def detectionsGraph(detections, time):
     plt.xlabel("Time (hr)")
     plt.ylabel("Detections")
     ax = plt.gca()
-    
+    name = path + "/detections_graph.png"
+    plt.savefig(name)
     
     
     
