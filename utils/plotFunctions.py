@@ -154,6 +154,55 @@ def detectionsGraph(detections, time,path):
     
     
     
+def memoryGraph_compare(memoryLog1,memoryLog2, time,path):
+    
+    
+    
+    
+    #Creates a plot of the memory used storying observed and processed datasets as well as the total memory use
+    plt.figure(2)
+    plt.plot(time,memoryLog1[0], color = 'green', linewidth=0.5)
+    plt.plot(time,memoryLog1[1], color = 'blue',linewidth=0.5)
+    plt.plot(time,memoryLog2[0], color = 'yellow',linewidth=0.5)
+    plt.plot(time,memoryLog2[1], color = 'red',linewidth=0.5)
+    plt.plot(time,memoryLog1[3], color = 'grey', linestyle='dashed',linewidth=0.5)
+    plt.title("Storage use over time")
+    plt.xlabel("Time (hr)")
+    plt.ylabel("memory used (MB)")
+    plt.legend(["Observation Data set memory use (optimised)","processed data set memory use(optimised)","Observation Data set memory use (manual)","processed data set memory use(manual)","Max storage"])
+    ax = plt.gca()
+    #ax.set_xticklabels([])
+    name = path + "/unprocessed_memory.png"
+    plt.savefig(name)
+
+    plt.figure(3)
+    plt.plot(time,memoryLog1[1],color = 'blue')
+    plt.plot(time,memoryLog1[2],color = 'red')
+    plt.plot(time,memoryLog2[1],color = 'green')
+    plt.plot(time,memoryLog2[2],color = 'orange')
+    plt.title("Processed and Downlniked data over time ")
+    plt.legend(["Processed (optimised)","Downlinked (optimised)","Processed (manual)","Downlinked (manual)"])
+    plt.xlabel("time (hr)")
+    plt.ylabel("Data (MB)")
+    ax = plt.gca()
+    #ax.set_xticklabels([])    
+    name = path + "/processed_memory.png"
+    plt.savefig(name)
+
+def detectionsGraph_compare(detections, time,path):
+    
+    # plots expexted detections against time
+    
+    plt.figure(6)
+    plt.plot(time, detections[0], color = "red")
+    plt.plot(time, detections[1], color = "blue")
+    plt.title("Expected destections over time")
+    plt.xlabel("Time (hr)")
+    plt.ylabel("Detections")
+    plt.legend(["optimised", "manual"])
+    ax = plt.gca()
+    name = path + "/detections_graph.png"
+    plt.savefig(name)
     
     
     
