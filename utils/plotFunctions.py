@@ -163,7 +163,7 @@ def memoryGraph_compare(memoryLog1,memoryLog2, time,path):
     plt.figure(2)
     plt.plot(time,memoryLog1[0], color = 'green', linewidth=0.5)
     plt.plot(time,memoryLog1[1], color = 'blue',linewidth=0.5)
-    plt.plot(time,memoryLog2[0], color = 'yellow',linewidth=0.5)
+    plt.plot(time,memoryLog2[0], color = 'orange',linewidth=0.5)
     plt.plot(time,memoryLog2[1], color = 'red',linewidth=0.5)
     plt.plot(time,memoryLog1[3], color = 'grey', linestyle='dashed',linewidth=0.5)
     plt.title("Storage use over time")
