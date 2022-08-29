@@ -39,12 +39,12 @@ def memoryGraph(memoryLog, time,path):
     
     plt.figure(2)
     plt.plot(time,memoryLog[0], color = 'green')
-    plt.plot(time,memoryLog[1], color = 'blue')
-    plt.plot(time,memoryLog[3], color = 'grey', linestyle='dashed')
+    plt.plot(time,memoryLog[2], color = 'blue')
+    #plt.plot(time,memoryLog[3], color = 'grey', linestyle='dashed')
     plt.title("Storage use over time")
     plt.xlabel("Time (hr)")
     plt.ylabel("memory used (MB)")
-    plt.legend(["Observation Data set memory use","processed data set memory use","Max storage"])
+    plt.legend(["Observation Data Use","Downlinked Data"])
     ax = plt.gca()
     #ax.set_xticklabels([])
     name = path + "/unprocessed_memory.png"

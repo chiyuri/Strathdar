@@ -13,13 +13,13 @@ Created on Thu Aug 18 11:23:40 2022
 import math
 import pandas as pd
 from ortools.sat.python import cp_model
-from Solver.CPModel_SC import CPModel_SC_data, CPModel_SC_No_process
+from Solver.CPModel_SC import CPModel_SC_data, CPModel_SC_No_process, CPModel_SC_realtime_process
 from Solver.HintFunctions import CreateManHint, AddHint
 from utils import plotFunctions as pf
 from utils import postProcessing as post
 from utils import readwrite
 
-affix = "pol/10s_15d/G40/"
+affix = "pol/60s_30d/G40/"
 
 #read in if a illuminator is in view 
 data = pd.read_csv("Data/"+ affix+"Illuminator view data log.csv")
@@ -47,7 +47,7 @@ switching_constraint=1
 switchtime = 1
 
 target_print = 0
-interval = 10000# length of interval to be optimised
+interval = 21000# length of interval to be optimised
 start_shift=0
 
 obs_dataset_mem = int( 150e3/100 )# in 0.1 kB   
@@ -91,7 +91,7 @@ if hint == 1:
 creating cp model
 '''
 
-(model, shifts, target_ilum, num_obs, num_pro, num_down, memory, Log) = CPModel_SC_No_process(any_ilum_list,gnd_stat_list, interval,start_shift, obs_dataset_mem, obs_rate, pro_dataset_mem,
+(model, shifts, target_ilum, num_obs, num_pro, num_down, memory, Log) = CPModel_SC_realtime_process(any_ilum_list,gnd_stat_list, interval,start_shift, obs_dataset_mem, obs_rate, pro_dataset_mem,
                     pro_rate, down_rate,down_dataset_mem, memory_init, memory_storage, num_obs_init, num_pro_init, num_down_init,dt, ilum_value_list,switchtime,switching_constraint)
 
 print("CP Model made")

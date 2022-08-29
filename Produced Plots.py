@@ -22,13 +22,13 @@ from utils import postProcessing as post
 from utils import readwrite
 
 
-filename = "iainLaptop_NoProcess_M8_D18_H12_min42"
+filename = "iainLaptop_M8_D29_H12_min31"
 affix = "pol/60s_30d/G40/"
 optimised_data = "results/" +affix + filename + "/Alt_scheduleraw_up_to_shift 21000.xlsx"
 dt = 60
 
 path = "results/figures/"+ affix +filename
-os.mkdir(path)
+#os.mkdir(path)
 
 
 df = pd.read_excel(optimised_data)
@@ -48,8 +48,8 @@ time = [dt*t/3600 for t in all_shifts]
 FLOP_to_proc = 1000
 FLOPS_available = 100 # giga flops
 
-obs_dataset_mem = int( 150e3/100 )# in 0.1 kB   
-obs_rate = 100                    # used to allow the observations to be processed in parts while remaining integers
+obs_dataset_mem = 3 #int( 150e3/100 )# in 0.1 kB   
+obs_rate = 10                    # used to allow the observations to be processed in parts while remaining integers
 
 pro_rate = math.ceil(FLOP_to_proc/FLOPS_available)  # rate at which the system can process a dataset
 pro_dataset_mem = int(300 /100)  # in 0.1 kB
