@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+    # -*- coding: utf-8 -*-
 """
 Created on Thu Aug  4 15:17:05 2022
 
@@ -34,12 +34,12 @@ ideintification of intervals and initial values
 
 
 full_horizon = 21000
-interval_size = 1500
+interval_size = 2000
 b = 0
 c = b + interval_size
 hint = 1
 switchtime =2
-affix = "pol/60s_30d/G40/"
+affix = "iss/60s_30d/G40/"
 switching_constraint = 1
 dt = 60
 
@@ -54,12 +54,12 @@ hot_start =0# defines whether it should start from data already partially optimi
 num_interval = math.ceil(full_horizon/interval_size)
 
 
-file_affix = "60s_30d_pol_"
+file_affix = "60s_30d_iss_"
 
 
 
 # used to define how long it takes to process each dataset
-FLOP_to_proc = 1500
+FLOP_to_proc = 1000
 FLOPS_available = 100 # giga flops
 
 obs_dataset_mem = int( 150e3/100 )# in 0.1 kB   
@@ -88,7 +88,7 @@ num_down= 0
 
 
 # read in data from alread optimised intervals into the hot start
-
+'''
 if hot_start == 1:
     optimised_data = "results/pol/10s_15d/G40/iainLaptop_M8_D15_H10_min35/Alt_scheduleraw_up_to_shift 6000.xlsx"
     dfhot = pd.read_excel(optimised_data)
@@ -99,7 +99,7 @@ if hot_start == 1:
     num_down=  int(data[b][7])
     memory =   int( num_obs*obs_dataset_mem + num_pro*pro_dataset_mem)
     scheduleout= dfhot
-
+'''
 #making the dataframe to output the schedule
 #schedtemp = [[] for a in range(9)]
 
@@ -111,7 +111,7 @@ hour = str(current_time.hour)
 minute = str(current_time.minute)
 time_now = "_M" + month + "_D" +day +"_H" + hour + "_min" + minute
 
-path = "./results/" + affix + "/proc_2k/iainLaptop"
+path = "./results/" + affix + "iainLaptop"
 
 path = path +time_now
 os.mkdir(path)
@@ -120,168 +120,162 @@ path = path+ "/"
 
 
 for interval in all_interval:
+     interval_size_CP_model = c-b
+     interval_shifts=range(b,c)
+     all_mod_shifts = range(c-b)
+    
+     print("Started interval %i to %i" % (b,c))
+     print("\n")
+    
+     '''
+     File read in 
+     '''
+    
+     #read in if a illuminator is in view 
+     data = pd.read_csv("Data/" + affix +"/Illuminator view data log.csv")
+     temp = data.values.tolist()
+     any_ilum_list = temp[b:c] 
+     #read in the downlink data times
+     data = pd.read_csv("Data/" + affix +"/Communications Data log.csv")
+     temp= data.values.tolist() 
+     datals = temp[b:c]
+    
+     # chages downlink from list of lists to 1D list
+     gnd_stat_list = [datals[i][0] for i in range(0, len(datals))]
+    
+     #  reads in which illuminators are visible
+     data = pd.read_csv("Data/" + affix +"/Avg objects Detection log.csv")
+     temp = data.values.tolist()
+     ilum_value_list = temp[b:c]
+    
+     for s in all_mod_shifts:
+         for sat in all_sats:
+             ilum_value_list[s][sat] = math.floor(ilum_value_list[s][sat]*10000)
     
     
     
     
-    
-    interval_size_CP_model = c-b
-    interval_shifts=range(b,c)
-    all_mod_shifts = range(c-b)
-    
-    print("Started interval %i to %i" % (b,c))
-    print("\n")
-    
-    '''
-    File read in 
-    '''
-    
-    #read in if a illuminator is in view 
-    data = pd.read_csv("Data/" + affix +"/Illuminator view data log.csv")
-    temp = data.values.tolist()
-    any_ilum_list = temp[b:c] 
-    #read in the downlink data times
-    data = pd.read_csv("Data/" + affix +"/Communications Data log.csv")
-    temp= data.values.tolist() 
-    datals = temp[b:c]
-    
-    # chages downlink from list of lists to 1D list
-    gnd_stat_list = [datals[i][0] for i in range(0, len(datals))]
-    
-    #  reads in which illuminators are visible
-    data = pd.read_csv("Data/" + affix +"/Avg objects Detection log.csv")
-    temp = data.values.tolist()
-    ilum_value_list = temp[b:c]
-    
-    for s in all_mod_shifts:
-        for sat in all_sats:
-            ilum_value_list[s][sat] = math.floor(ilum_value_list[s][sat]*10000)
-    
-    
-    
-    
-    # make the hint for the model
-    '''
+     # make the hint for the model
+     '''
     if hint == 1:
         (hint_shifts, hint_target_ilum) = CreateManHint(any_ilum_list,ilum_value_list, gnd_stat_list, all_action,all_mod_shifts, all_sats, obs_dataset_mem, obs_rate, pro_dataset_mem,
                     pro_rate, down_rate, memory, memory_storage, num_obs,num_pro, dt, switching_constraint)
         
-    '''
-    '''
+     '''
+     '''
     Create hint
-    '''
+     '''
     
-    if hint ==1:
-        (hint_shifts, hint_target_ilum) = CreateManHint_SwitchingConstraint(any_ilum_list,ilum_value_list, gnd_stat_list, all_action,all_mod_shifts, all_sats, obs_dataset_mem, obs_rate, pro_dataset_mem,
+     if hint ==1:
+         (hint_shifts, hint_target_ilum) = CreateManHint_SwitchingConstraint(any_ilum_list,ilum_value_list, gnd_stat_list, all_action,all_mod_shifts, all_sats, obs_dataset_mem, obs_rate, pro_dataset_mem,
                                                         pro_rate, down_rate, memory, memory_storage, num_obs,num_pro, dt, switchtime)
-        print("hint made")
-
-    '''
+         print("hint made")
+    
+     '''
     create model
-    '''
+     '''
     
     
-    (model, shifts, target_ilum, num_obs, num_pro, num_down, memory, Log) = CPModel_SC_data(any_ilum_list,gnd_stat_list, interval_size_CP_model,b, obs_dataset_mem, obs_rate, pro_dataset_mem,
+     (model, shifts, target_ilum, num_obs, num_pro, num_down, memory, Log) = CPModel_SC_data(any_ilum_list,gnd_stat_list, interval_size_CP_model,b, obs_dataset_mem, obs_rate, pro_dataset_mem,
                     pro_rate, down_rate,down_dataset_mem, memory, memory_storage, num_obs, num_pro, num_down,dt, ilum_value_list,switchtime, switching_constraint)
-    print("CP Model made for interval %i to %i" % (b,c))
-
-    '''
+     print("CP Model made for interval %i to %i" % (b,c))
+    
+     '''
     add hint
-    '''
+     '''
     
-    if hint ==1:
-            (model, shifts, target_ilum) = AddHint(model, shifts, target_ilum, hint_shifts, hint_target_ilum, all_mod_shifts, all_action, all_sats)
-            print("hint added")
-
-    '''
+     if hint ==1:
+             (model, shifts, target_ilum) = AddHint(model, shifts, target_ilum, hint_shifts, hint_target_ilum, all_mod_shifts, all_action, all_sats)
+             print("hint added")
+    
+     '''
     run model
-    '''
+     '''
     
-    solver = cp_model.CpSolver()  
-
-
-    solver.parameters.max_time_in_seconds =900
-
-    solver.parameters.log_search_progress = True
-    solver.parameters.num_search_workers = 8
-    
-    status = solver.Solve(model)
+     solver = cp_model.CpSolver()  
     
     
-    if status == cp_model.OPTIMAL :
-        print('Solution: optimal found for interval %i to %i' % (b,c))
-        print(f'Objective value achieved = {solver.ObjectiveValue()} ')
-        print('\nStatistics')
-        print('  - conflicts      : %i' % solver.NumConflicts())
-        print('  - branches       : %i' % solver.NumBranches())
-        print('  - wall time      : %f s' % solver.WallTime())
+     solver.parameters.max_time_in_seconds =900
+    
+     solver.parameters.log_search_progress = True
+     solver.parameters.num_search_workers = 8
+    
+     status = solver.Solve(model)
     
     
-    elif status == cp_model.FEASIBLE:
-        print('Solution: feasible found for interval %i to %i' % (b,c))
-        print(f'Objective value achieved = {solver.ObjectiveValue()} ')
-        print('\nStatistics')
-        print('  - conflicts      : %i' % solver.NumConflicts())
-        print('  - branches       : %i' % solver.NumBranches())
-        print('  - wall time      : %f s' % solver.WallTime())
+     if status == cp_model.OPTIMAL :
+         print('Solution: optimal found for interval %i to %i' % (b,c))
+         print(f'Objective value achieved = {solver.ObjectiveValue()} ')
+         print('\nStatistics')
+         print('  - conflicts      : %i' % solver.NumConflicts())
+         print('  - branches       : %i' % solver.NumBranches())
+         print('  - wall time      : %f s' % solver.WallTime())
+    
+    
+     elif status == cp_model.FEASIBLE:
+         print('Solution: feasible found for interval %i to %i' % (b,c))
+         print(f'Objective value achieved = {solver.ObjectiveValue()} ')
+         print('\nStatistics')
+         print('  - conflicts      : %i' % solver.NumConflicts())
+         print('  - branches       : %i' % solver.NumBranches())
+         print('  - wall time      : %f s' % solver.WallTime())
         
-  
+      
     
-    else:
-        print('Solution: no feasible solution found for %i to %i' % (b,c))
-        print('\nStatistics')
-        print('  - conflicts      : %i' % solver.NumConflicts())
-        print('  - branches       : %i' % solver.NumBranches())
-        print('  - wall time      : %f s' % solver.WallTime())
-    
-    
-    memory= solver.Value(memory)
-    num_obs = solver.Value(num_obs)
-    num_pro= solver.Value(num_pro)
-    num_down= solver.Value(num_down)
+     else:
+         print('Solution: no feasible solution found for %i to %i' % (b,c))
+         print('\nStatistics')
+         print('  - conflicts      : %i' % solver.NumConflicts())
+         print('  - branches       : %i' % solver.NumBranches())
+         print('  - wall time      : %f s' % solver.WallTime())
     
     
-    '''
+     memory= solver.Value(memory)
+     num_obs = solver.Value(num_obs)
+     num_pro= solver.Value(num_pro)
+     num_down= solver.Value(num_down)
+    
+    
+     '''
     write values out to files
-    '''
-    scheduleWrite = [[0  for a in range(9)] for s in all_mod_shifts]
-    target_ilum_val_inv = [["-"  for sat in all_sats] for s in all_mod_shifts] 
-    for s in all_mod_shifts:
-        for a in all_action:
-            if solver.Value(shifts[(a,s)]) == 1:
+     '''
+     scheduleWrite = [[0  for a in range(9)] for s in all_mod_shifts]
+     target_ilum_val_inv = [["-"  for sat in all_sats] for s in all_mod_shifts] 
+     for s in all_mod_shifts:
+         for a in all_action:
+             if solver.Value(shifts[(a,s)]) == 1:
               
-                scheduleWrite[s][a] = 1
-        for i in range(4):
-            multi =1
-            if i ==3:
-                multi = 0.1
-            scheduleWrite[s][i+4] = multi*solver.Value(Log[i][s])
+                 scheduleWrite[s][a] = 1
+         for i in range(4):
+             multi =1
+             if i ==3:
+                 multi = 0.1
+             scheduleWrite[s][i+4] = multi*solver.Value(Log[i][s])
             
                 
-        for sat in all_sats:
-            if solver.Value(target_ilum[(sat,s)]) == 1:
-                scheduleWrite[s][8] = sat
-                target_ilum_val_inv[s][sat] = 1
-    ind = [i for i in range(b,c)]
+         for sat in all_sats:
+             if solver.Value(target_ilum[(sat,s)]) == 1:
+                 scheduleWrite[s][8] = sat
+                 target_ilum_val_inv[s][sat] = 1
+     ind = [i for i in range(b,c)]
     
-    if b == 0:
+     if b == 0:
         
-        scheduleout= pd.DataFrame(scheduleWrite,index = ind, columns=schedule_out_titles)
+         scheduleout= pd.DataFrame(scheduleWrite,index = ind, columns=schedule_out_titles)
         
-    else:
-        dftemp = pd.DataFrame(scheduleWrite,index = ind, columns=schedule_out_titles)
-        scheduleout= scheduleout.append(dftemp)
-        
-    
-    name = "Alt_scheduleraw_up_to_shift %i" % (c)    
-    readwrite.df_to_xlsxOut(scheduleout,schedule_out_titles, name, path)
-    b += interval_size
-    c = b+interval_size
-    
-    if c > full_horizon:
-        c = full_horizon
-    
-    
-    print("\n")
+     else:
+         dftemp = pd.DataFrame(scheduleWrite,index = ind, columns=schedule_out_titles)
+         scheduleout= scheduleout.append(dftemp)
         
     
+     name = "Alt_scheduleraw_up_to_shift %i" % (c)    
+     readwrite.df_to_xlsxOut(scheduleout,schedule_out_titles, name, path)
+     b += interval_size
+     c = b+interval_size
+    
+     if c > full_horizon:
+         c = full_horizon
+    
+    
+     print("\n")
+        
