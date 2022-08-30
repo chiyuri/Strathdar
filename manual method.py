@@ -49,7 +49,7 @@ file_affix = "60s_30d_pol_"
 FLOP_to_proc = 1000
 FLOPS_available = 100 # giga flops
 
-obs_dataset_mem = int( 150e3/100 )# in 0.1 kB   
+obs_dataset_mem = int( 300/100 )# in 0.1 kB   
 obs_rate = 100                    # used to allow the observations to be processed in parts while remaining integers
 
 pro_rate = math.ceil(FLOP_to_proc/FLOPS_available)  # rate at which the system can process a dataset

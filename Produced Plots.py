@@ -22,13 +22,13 @@ from utils import postProcessing as post
 from utils import readwrite
 
 
-filename = "iainLaptop_M8_D29_H12_min31"
+filename = "iainLaptopManual_M8_D30_H10_min17"
 affix = "pol/60s_30d/G40/"
 optimised_data = "results/" +affix + filename + "/Alt_scheduleraw_up_to_shift 21000.xlsx"
 dt = 60
 
 path = "results/figures/"+ affix +filename
-#os.mkdir(path)
+os.mkdir(path)
 
 
 df = pd.read_excel(optimised_data)

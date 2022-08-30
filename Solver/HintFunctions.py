@@ -20,20 +20,20 @@ def CreateManHint(ilum_in_view,target_value, gnd_in_view, all_action,all_shifts,
     Log = [[],[],[],[]]
     for s in all_shifts:
         
-        if gnd_in_view[s] == 1 and num_pro> down_rate*dt:
+        if gnd_in_view[s] == 1 and num_obs> down_rate*dt:
             hint_shifts[2][s] = 1
-            num_pro -= down_rate*dt
+            num_obs -= down_rate*dt
             num_dow += down_rate*dt
         elif sum(ilum_in_view[s][sat] for sat in all_sat) > 0 and memory <= memory_storage - obs_mem_size*obs_rate*dt:
             hint_shifts[0][s] = 1
             num_obs += obs_rate*dt
-        elif num_obs > pro_rate*dt:
-            hint_shifts[1][s] = 1
-            num_obs -= pro_rate*dt
-            num_pro += pro_rate*dt
+       # elif num_obs > pro_rate*dt:
+       #     hint_shifts[1][s] = 1
+       #    num_obs -= pro_rate*dt
+       #   num_pro += pro_rate*dt
         else:
-            hint_shifts[3][s] = 0
-        memory = num_obs*obs_mem_size + num_pro* pro_mem_size
+            hint_shifts[3][s] = 1
+        memory = num_obs*obs_mem_size# + num_pro* pro_mem_size
         Log[0].append(num_obs)
         Log[1].append(num_pro)
         Log[2].append(num_dow)

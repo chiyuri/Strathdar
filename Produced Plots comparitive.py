@@ -23,7 +23,7 @@ from utils import readwrite
 
 
 
-filename = ["iainLaptop_M8_D17_H13_min24","iainLaptopManual_M8_D18_H11_min48",]
+filename = ["iainLaptop_M8_D29_H12_min31","iainLaptopManual_M8_D30_H10_min17",]
 affix = "pol/60s_30d/G40/"
 
 dt = 60
