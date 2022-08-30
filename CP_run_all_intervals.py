@@ -59,7 +59,7 @@ file_affix = "60s_30d_pol_"
 
 
 # used to define how long it takes to process each dataset
-FLOP_to_proc = 500
+FLOP_to_proc = 1500
 FLOPS_available = 100 # giga flops
 
 obs_dataset_mem = int( 150e3/100 )# in 0.1 kB   
