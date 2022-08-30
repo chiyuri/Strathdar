@@ -22,7 +22,7 @@ from utils import postProcessing as post
 from utils import readwrite
 
 
-filename = "iainLaptopManual_M8_D18_H11_min48"
+filename = "iainLaptop_NoProcess_M8_D18_H12_min42"
 affix = "pol/60s_30d/G40/"
 optimised_data = "results/" +affix + filename + "/Alt_scheduleraw_up_to_shift 21000.xlsx"
 dt = 60
