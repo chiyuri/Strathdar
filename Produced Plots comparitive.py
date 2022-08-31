@@ -23,8 +23,8 @@ from utils import readwrite
 
 
 
-filename = ["iainLaptop_M8_D17_H13_min24","iainLaptopManual_M8_D18_H11_min48",]
-affix = "pol/60s_30d/G40/"
+filename = ["iainLaptop_M8_D30_H11_min1","iainLaptopManual_M8_D30_H13_min46",]
+affix = "iss/60s_30d/G40/"
 
 dt = 60
 
@@ -41,7 +41,7 @@ for j in  range(2):
     data = df.values.tolist()
     
     #  reads in which illuminators are visible
-    df = pd.read_csv("Data/pol/60s_30d/G40 new area/Avg objects Detection log.csv")
+    df = pd.read_csv("Data/" + affix + "Avg objects Detection log.csv")
     ilum_value_list = df.values.tolist()
     
     data_length = len(data)

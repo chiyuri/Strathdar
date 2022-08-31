@@ -1,4 +1,4 @@
-    # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 Created on Thu Aug  4 15:17:05 2022
 
@@ -39,7 +39,7 @@ b = 0
 c = b + interval_size
 hint = 1
 switchtime =2
-affix = "iss/60s_30d/G40/"
+affix = "iss/60s_30d/G45/"
 switching_constraint = 1
 dt = 60
 

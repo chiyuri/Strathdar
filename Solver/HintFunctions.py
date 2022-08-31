@@ -32,7 +32,7 @@ def CreateManHint(ilum_in_view,target_value, gnd_in_view, all_action,all_shifts,
             num_obs -= pro_rate*dt
             num_pro += pro_rate*dt
         else:
-            hint_shifts[3][s] = 0
+            hint_shifts[3][s] = 1
         memory = num_obs*obs_mem_size + num_pro* pro_mem_size
         Log[0].append(num_obs)
         Log[1].append(num_pro)

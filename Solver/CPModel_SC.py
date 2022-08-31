@@ -299,7 +299,7 @@ def CPModel_SC_data_endpoint_constraints(Any_Ilum_list,Gnd_stat_list, interval,s
             model.Add(num_down > endpoint_constraints[2] - 2*dt*down_rate)
             model.Add(num_down < endpoint_constraints[2] + 2*dt*down_rate)
         
-    model.Maximize(sum(shifts[(2,s)]  + target_ilum[(sat,s)] * ilum_value_list[s][sat] for sat in all_sats for s in all_mod_shifts))
+    model.Maximize( 30*shifts[(2,s)] + sum(shifts[(2,s)]  + target_ilum[(sat,s)] * ilum_value_list[s][sat] for sat in all_sats for s in all_mod_shifts))
                                                                 #^^sum( target_ilum[(sat,s)]for sat in all_satsilum_value_list[s][sat]
     
     return model, shifts, target_ilum, num_obs, num_pro, num_down, memory, Log
